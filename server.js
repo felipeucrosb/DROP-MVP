@@ -44,7 +44,7 @@ io.on("connection",sock=>{
   sock.on("start-now",()=>{if(sock.id===s.host)reveal()});
   sock.on("result",({score})=>submit(sock.id,score));
   sock.on("finish-drop",()=>{if(sock.id===s.host)finish()});
-  sock.on("new-drop",()=>{if(sock.id!==s.host||s.phase!=="finished")return;s.dropNo++;reset();emit()});
+  sock.on("new-drop",()=>{if(s.phase!=="finished")return;s.dropNo++;reset();emit()});
   sock.on("disconnect",()=>{
     const wasHost=s.host===sock.id;delete s.players[sock.id];
     if(wasHost)s.host=Object.keys(s.players)[0]||null;
