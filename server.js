@@ -5,7 +5,7 @@ const app=express(),server=http.createServer(app),io=new Server(server);
 app.use(express.static(path.join(__dirname,"public")));
 
 const HOST_KEY=process.env.HOST_KEY || "DROPADMIN";
-const MIN_BOTS=5;
+const MIN_BOTS=10;
 const LOBBY_MS=180000;
 const GAMES=["button","stack","flappy","reaction","center","taprush","catcher","memory","slider","balance","aim","stoplight"];
 
@@ -59,13 +59,13 @@ function addBots(){
   for(let i=0;i<MIN_BOTS;i++){
     const id="BOT_"+Date.now()+"_"+i+"_"+Math.random().toString(36).slice(2,8);
     const name=randomBotName(used); used.add(name);
-    s.players[id]={name,isBot:true,status:"waiting",score:0,roundScore:null,finished:false,liveScore:null};
+    s.players[id]={name,isBot:true,status:"waiting",score:0,roundScore:null,finished:false,liveScore:null,eliminatedRound:null};
   }
 }
 function publicState(){
   const ps={};
   for(const [id,p] of Object.entries(s.players)){
-    ps[id]={name:p.name,isBot:!!p.isBot,status:p.status,score:p.score||0,roundScore:p.roundScore,finished:!!p.finished,liveScore:p.liveScore};
+    ps[id]={name:p.name,isBot:!!p.isBot,status:p.status,score:p.score||0,roundScore:p.roundScore,finished:!!p.finished,liveScore:p.liveScore,eliminatedRound:p.eliminatedRound};
   }
   return {
     phase:s.phase,players:ps,playerCount:Object.keys(ps).length,
@@ -193,13 +193,13 @@ function cutRound(){
 
     let botsToEliminate=0;
     if(s.round===1){
-      // Eliminate about one third of the bots.
-      botsToEliminate=Math.max(1,Math.ceil(botIds.length/3));
+      // 10 -> 7 when starting with the default 10.
+      botsToEliminate=Math.min(3,botIds.length);
     }else if(s.round===2){
-      // Eliminate about half of the bots that remain.
-      botsToEliminate=Math.max(1,Math.ceil(botIds.length/2));
+      // 7 -> 4.
+      botsToEliminate=Math.min(3,botIds.length);
     }else{
-      // Round 3 removes every remaining bot.
+      // Round 3 removes every remaining bot so Round 4 is human-only.
       botsToEliminate=botIds.length;
     }
 
@@ -211,7 +211,7 @@ function cutRound(){
       s.players[id].status="survived";
       s.players[id].score=(s.players[id].score||0)+1;
     }
-    for(const id of eliminatedBots)s.players[id].status="eliminated";
+    for(const id of eliminatedBots){s.players[id].status="eliminated";s.players[id].eliminatedRound=s.round;}
 
     s.activeIds=survivors;
     s.roundResults=rows.map((r,i)=>({
@@ -230,7 +230,7 @@ function cutRound(){
     for(const r of humanRows){
       const p=s.players[r.id];
       if(survivorIds.has(r.id)){p.status="survived";p.score=(p.score||0)+1}
-      else p.status="eliminated";
+      else {p.status="eliminated";p.eliminatedRound=s.round;}
     }
     s.activeIds=survivorRows.map(r=>r.id);
     s.roundResults=humanRows.map((r,i)=>({...r,rank:i+1,survived:survivorIds.has(r.id),eliminated:!survivorIds.has(r.id),protected:false}));
@@ -275,7 +275,7 @@ io.on("connection",sock=>{
     name=String(name||"").trim().slice(0,24);
     if(!name)return sock.emit("join-error","Choose a username.");
     if(s.phase!=="lobby")return sock.emit("join-error","The Drop is not open.");
-    s.players[sock.id]={name,isBot:false,status:"waiting",score:0,roundScore:null,finished:false,liveScore:null};
+    s.players[sock.id]={name,isBot:false,status:"waiting",score:0,roundScore:null,finished:false,liveScore:null,eliminatedRound:null};
     sock.emit("joined",{id:sock.id});emit();
   });
   sock.on("result",({score})=>submit(sock.id,score));
@@ -291,4 +291,4 @@ io.on("connection",sock=>{
     emit();
   });
 });
-server.listen(process.env.PORT||3000,()=>console.log("DROP V1.9 Progressive Difficulty ready"));
+server.listen(process.env.PORT||3000,()=>console.log("DROP V2.0 Survivors + Eliminated ready"));

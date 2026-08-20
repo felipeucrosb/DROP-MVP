@@ -47,15 +47,18 @@ DROPADMIN
 - From Level 4 onward, the bottom 50% of human players is eliminated each round.
 - Full round leaderboards still show both survivors and eliminated players.
 
-## V1.9 — Progressive Difficulty
-- Levels 1–5: EASY
-- Levels 6–7: MEDIUM
-- Levels 8–9: HARD
-- Level 10+: EXTREME
-- Every minigame gets a visual instruction plus 3–2–1–GO before scoring.
-- Every minigame starts forgiving even in late rounds, then ramps toward that round's difficulty.
-- AIM targets shrink progressively.
-- STACK acceleration ramps progressively.
-- FLAPPY speed ramps progressively.
-- CATCH speed ramps progressively.
-- Server hard timeout extended for tutorial/countdown.
+## V2.0 — Survivors / Eliminated Boards
+- Every Drop now starts with 10 clearly-labeled CPU bots.
+- Bots are progressively removed across the first three levels:
+  - Level 1: 10 -> ~7
+  - Level 2: ~7 -> ~4
+  - Level 3: all remaining CPUs are eliminated
+- Level 4 starts with human players only.
+- CPU bots can never reach the Top 2 or win the Drop.
+- After EVERY completed level, the transition screen always shows two independent cumulative boards:
+  - SURVIVORS — everyone still alive, humans + CPU bots
+  - ELIMINATED — everyone eliminated since the beginning of the Drop
+- The ELIMINATED count is cumulative and grows every level.
+- Each eliminated username shows the level where they were eliminated.
+- Most recently eliminated players appear first.
+- The old post-round Cut Line layout has been removed.
