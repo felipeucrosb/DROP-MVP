@@ -27,3 +27,35 @@ HOST_KEY = your secret password
 
 Default HOST_KEY if you do not set one:
 DROPADMIN
+
+## V1.7 — Full Round Leaderboard Fix
+- After every level, ALL participants see the same round leaderboard before the next level.
+- The leaderboard now includes both survivors and eliminated players.
+- A red CUT LINE separates players advancing from players eliminated.
+- Survivors show SAFE / SURVIVED.
+- Eliminated players show ELIMINATED.
+- Players who were just eliminated remain on the round-results screen for the full transition, then move to live spectator mode on the next level.
+
+## V1.8 — Progressive Bots
+- Bots now remain in the tournament for the first 3 levels.
+- Human players are protected from elimination in Levels 1, 2 and 3.
+- Bots are eliminated progressively:
+  - Level 1: roughly one-third of bots are removed.
+  - Level 2: roughly half of the remaining bots are removed.
+  - Level 3: all remaining bots are removed.
+- Level 4 begins with human players only.
+- From Level 4 onward, the bottom 50% of human players is eliminated each round.
+- Full round leaderboards still show both survivors and eliminated players.
+
+## V1.9 — Progressive Difficulty
+- Levels 1–5: EASY
+- Levels 6–7: MEDIUM
+- Levels 8–9: HARD
+- Level 10+: EXTREME
+- Every minigame gets a visual instruction plus 3–2–1–GO before scoring.
+- Every minigame starts forgiving even in late rounds, then ramps toward that round's difficulty.
+- AIM targets shrink progressively.
+- STACK acceleration ramps progressively.
+- FLAPPY speed ramps progressively.
+- CATCH speed ramps progressively.
+- Server hard timeout extended for tutorial/countdown.

@@ -110,7 +110,7 @@ function startTournament(){
 }
 function startRoundReveal(){
   const humanAlive=s.activeIds.filter(id=>s.players[id]&&!s.players[id].isBot).length;
-  if(humanAlive<=1 && s.round>=3){finishTournament();return}
+  if(humanAlive<=1 && s.round>=4){finishTournament();return}
   s.game=nextGame(); s.roundResults=[];
   for(const id of s.activeIds){
     const p=s.players[id]; if(!p)continue;
@@ -128,7 +128,7 @@ function startRoundReveal(){
         if(!p.isBot)p.status="timeout";
       }
       cutRound();
-    },22000);
+    },26000);
   },3200);
 }
 function botScore(){
@@ -185,19 +185,42 @@ function cutRound(){
   clearTimeout(timers.hard);
   const rows=sortedRoundRows();
 
-  if(s.round<=2){
+  if(s.round<=3){
+    // Rounds 1–3 are protected for humans.
+    // Bots disappear progressively so Round 4 begins with humans only.
     const humanIds=rows.filter(r=>!r.isBot).map(r=>r.id);
     const botIds=rows.filter(r=>r.isBot).map(r=>r.id);
-    const botsToEliminate=s.round===1?Math.max(1,Math.floor(botIds.length/2)):botIds.length;
+
+    let botsToEliminate=0;
+    if(s.round===1){
+      // Eliminate about one third of the bots.
+      botsToEliminate=Math.max(1,Math.ceil(botIds.length/3));
+    }else if(s.round===2){
+      // Eliminate about half of the bots that remain.
+      botsToEliminate=Math.max(1,Math.ceil(botIds.length/2));
+    }else{
+      // Round 3 removes every remaining bot.
+      botsToEliminate=botIds.length;
+    }
+
     const shuffled=botIds.slice().sort(()=>Math.random()-.5);
     const eliminatedBots=new Set(shuffled.slice(0,botsToEliminate));
     const survivors=[...humanIds,...botIds.filter(id=>!eliminatedBots.has(id))];
 
-    for(const id of survivors){s.players[id].status="survived";s.players[id].score=(s.players[id].score||0)+1}
+    for(const id of survivors){
+      s.players[id].status="survived";
+      s.players[id].score=(s.players[id].score||0)+1;
+    }
     for(const id of eliminatedBots)s.players[id].status="eliminated";
 
     s.activeIds=survivors;
-    s.roundResults=rows.map((r,i)=>({...r,rank:i+1,survived:survivors.includes(r.id),eliminated:eliminatedBots.has(r.id),protected:!r.isBot}));
+    s.roundResults=rows.map((r,i)=>({
+      ...r,
+      rank:i+1,
+      survived:survivors.includes(r.id),
+      eliminated:eliminatedBots.has(r.id),
+      protected:!r.isBot
+    }));
   }else{
     const humanRows=rows.filter(r=>!r.isBot);
     if(humanRows.length<=1){finishTournament();return}
@@ -216,7 +239,7 @@ function cutRound(){
   s.phase="cut";emit();
   timers.cut=setTimeout(()=>{
     const humans=s.activeIds.filter(id=>s.players[id]&&!s.players[id].isBot).length;
-    if(humans<=1 && s.round>=2)finishTournament();
+    if(humans<=1 && s.round>=3)finishTournament();
     else{s.round+=1;startRoundReveal()}
   },6000);
 }
@@ -268,4 +291,4 @@ io.on("connection",sock=>{
     emit();
   });
 });
-server.listen(process.env.PORT||3000,()=>console.log("DROP V1.6 Bots + Live Spectator ready"));
+server.listen(process.env.PORT||3000,()=>console.log("DROP V1.9 Progressive Difficulty ready"));
