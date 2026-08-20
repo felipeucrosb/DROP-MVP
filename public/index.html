@@ -1,28 +1,178 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DROP</title><script src="/socket.io/socket.io.js"></script><style>
+<title>DROP — Survivor</title><script src="/socket.io/socket.io.js"></script><style>
 :root{--bg:#050505;--p:#101010;--line:#292929;--txt:#fff;--mut:#909090;--red:#ff3b30;--green:#2bd67b;--gold:#f3c44e}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#2a0b0a 0,#060606 30%,#030303 100%);color:var(--txt);font-family:Inter,system-ui,sans-serif;min-height:100vh}button,input{font:inherit}.wrap{max-width:1180px;margin:auto;padding:18px}.card{background:linear-gradient(145deg,#111,#090909);border:1px solid var(--line);border-radius:28px;box-shadow:0 30px 80px #0008}.hidden{display:none!important}header{display:flex;justify-content:space-between;align-items:center;margin:8px 0 18px}.brand{font-size:28px;font-weight:1000}.brand span{color:var(--red)}.mini{font-size:12px;color:var(--mut)}.hero,.lobby,.reveal,.out{min-height:650px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px}.tag{color:var(--red);font-size:12px;font-weight:1000;letter-spacing:.14em}.money{font-size:clamp(82px,15vw,180px);font-weight:1000;letter-spacing:-.08em;line-height:.9;margin:18px}.hero h1{font-size:clamp(38px,5vw,64px);line-height:.95;margin:10px}.hero p{color:var(--mut);max-width:620px}.join{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}.join input{width:280px;border:1px solid #333;background:#0b0b0b;color:#fff;border-radius:999px;padding:15px 18px;outline:none}.btn{border:0;border-radius:999px;padding:15px 22px;font-weight:900;cursor:pointer}.white{background:#fff;color:#000}.red{background:var(--red);color:#fff}.ghost{background:#111;color:#fff;border:1px solid #333}.count{font-size:clamp(78px,12vw,150px);font-weight:1000;color:var(--red);letter-spacing:-.06em}.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:800px}.chip{padding:8px 12px;border:1px solid #2b2b2b;background:#111;border-radius:999px;font-size:12px}.gname{font-size:clamp(64px,12vw,150px);font-weight:1000;color:var(--red);letter-spacing:-.08em}.game{min-height:700px;overflow:hidden}.gameTop{display:flex;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #222}.gameArea{min-height:620px;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px}.instruction{color:var(--mut);margin-bottom:18px}.huge{font-size:clamp(68px,13vw,140px);font-weight:1000}.hold{width:min(340px,72vw);height:min(340px,72vw);border-radius:50%;border:0;background:var(--red);color:#fff;font-size:28px;font-weight:1000;cursor:pointer}.stack{width:min(480px,90vw);height:500px;position:relative;overflow:hidden;border-bottom:2px solid #444;background:#080808}.block{position:absolute;height:28px;background:var(--red);border-radius:5px}.flap{width:min(700px,94vw);height:520px;position:relative;overflow:hidden;border:1px solid #222;border-radius:18px;background:linear-gradient(#0b1720,#07100c)}.bird{position:absolute;left:90px;top:230px;width:34px;height:34px;border-radius:50%;background:var(--gold)}.pipe{position:absolute;width:70px;background:var(--green)}.ground{position:absolute;left:0;right:0;bottom:0;height:18px;background:#17331d}.rank{font-size:clamp(72px,14vw,150px);font-weight:1000;color:var(--red);letter-spacing:-.06em}.rows{width:min(700px,100%);margin:18px auto}.row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #222}.row:first-child{color:var(--gold);font-weight:950;font-size:20px}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#2a0b0a 0,#060606 30%,#030303 100%);color:var(--txt);font-family:Inter,system-ui,sans-serif;min-height:100vh}button,input{font:inherit}.wrap{max-width:1180px;margin:auto;padding:18px}.card{background:linear-gradient(145deg,#111,#090909);border:1px solid var(--line);border-radius:28px;box-shadow:0 30px 80px #0008}.hidden{display:none!important}header{display:flex;justify-content:space-between;align-items:center;margin:8px 0 18px}.brand{font-size:28px;font-weight:1000}.brand span{color:var(--red)}.mini{font-size:12px;color:var(--mut)}.hero,.lobby,.reveal,.out,.cut{min-height:650px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px}.tag{color:var(--red);font-size:12px;font-weight:1000;letter-spacing:.14em}.money{font-size:clamp(82px,15vw,180px);font-weight:1000;letter-spacing:-.08em;line-height:.9;margin:18px}.hero h1{font-size:clamp(38px,5vw,64px);line-height:.95;margin:10px}.hero p{color:var(--mut);max-width:620px}.join{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}.join input{width:280px;border:1px solid #333;background:#0b0b0b;color:#fff;border-radius:999px;padding:15px 18px;outline:none}.btn{border:0;border-radius:999px;padding:15px 22px;font-weight:900;cursor:pointer}.white{background:#fff;color:#000}.red{background:var(--red);color:#fff}.green{background:var(--green);color:#03120a}.ghost{background:#111;color:#fff;border:1px solid #333}.count{font-size:clamp(78px,12vw,150px);font-weight:1000;color:var(--red);letter-spacing:-.06em}.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:900px}.chip{padding:8px 12px;border:1px solid #2b2b2b;background:#111;border-radius:999px;font-size:12px}.gname{font-size:clamp(64px,12vw,150px);font-weight:1000;color:var(--red);letter-spacing:-.08em}.game{min-height:700px;overflow:hidden}.gameTop{display:flex;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #222}.gameArea{min-height:620px;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px}.instruction{color:var(--mut);margin-bottom:18px}.huge{font-size:clamp(68px,13vw,140px);font-weight:1000}.hold{width:min(340px,72vw);height:min(340px,72vw);border-radius:50%;border:0;background:var(--red);color:#fff;font-size:28px;font-weight:1000;cursor:pointer}.stack{width:min(480px,90vw);height:500px;position:relative;overflow:hidden;border-bottom:2px solid #444;background:#080808}.block{position:absolute;height:28px;background:var(--red);border-radius:5px}.flap{width:min(700px,94vw);height:520px;position:relative;overflow:hidden;border:1px solid #222;border-radius:18px;background:linear-gradient(#0b1720,#07100c)}.bird{position:absolute;left:90px;top:230px;width:34px;height:34px;border-radius:50%;background:var(--gold)}.pipe{position:absolute;width:70px;background:var(--green)}.ground{position:absolute;left:0;right:0;bottom:0;height:18px;background:#17331d}.rank{font-size:clamp(72px,14vw,150px);font-weight:1000;color:var(--red);letter-spacing:-.06em}.rows{width:min(760px,100%);margin:18px auto}.row{display:grid;grid-template-columns:70px 1fr 120px 110px;gap:10px;text-align:left;padding:13px 0;border-bottom:1px solid #222;align-items:center}.survive{color:var(--green);font-weight:1000}.eliminate{color:#ff6961;font-weight:1000}.admin{position:fixed;right:16px;bottom:16px;z-index:20}.adminPanel{position:fixed;right:16px;bottom:70px;width:330px;padding:18px;background:#111;border:1px solid #333;border-radius:20px;z-index:20}.adminPanel input{width:100%;padding:12px;border-radius:10px;border:1px solid #333;background:#080808;color:#fff}.adminBtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.spectate{padding:50px 28px;text-align:center}.survivorCount{font-size:clamp(72px,13vw,150px);font-weight:1000;color:var(--green);letter-spacing:-.07em}
+@media(max-width:700px){.row{grid-template-columns:45px 1fr 80px}.row span:last-child{display:none}}
 </style></head><body><div class="wrap">
 <header><div class="brand">DR<span>O</span>P</div><div class="mini">EVERYONE GETS ONE SHOT.</div></header>
-<section id="home" class="card hero"><div class="tag" id="dropNo">DROP #1</div><div class="money">$1,000</div><h1>One mystery game.<br>One winner.</h1><p>Free entry. One attempt. The game is revealed only when the Drop starts.</p><div class="join"><input id="name" placeholder="Choose a username"><button id="join" class="btn white">JOIN DROP — FREE</button></div><div class="mini" style="margin-top:18px"><span id="waiting">0</span> players waiting</div><div id="err" style="color:#ff6a62;margin-top:8px"></div></section>
-<section id="lobby" class="card lobby hidden"><div class="tag">DROP CLOSES IN</div><div class="count" id="lclock">01:00</div><h2><span id="pc">0</span> PLAYERS WAITING</h2><div class="chips" id="chips"></div><button id="start" class="btn red hidden" style="margin-top:24px">START NOW</button></section>
-<section id="reveal" class="card reveal hidden"><div class="mini">TODAY'S GAME IS...</div><div class="gname" id="gname">THE BUTTON</div><div class="mini" id="grule"></div></section>
-<section id="game" class="card game hidden"><div class="gameTop"><b id="glabel"></b><span><span id="alive">0</span> PLAYING</span></div><div class="gameArea" id="area"></div></section>
-<section id="out" class="card out hidden"><div class="tag">YOUR RESULT</div><div class="rank">LOCKED</div><h2 id="scoreText"></h2><p class="mini">Waiting for the rest of the Drop...</p></section>
-<section id="finished" class="card out hidden"><div class="tag">DROP COMPLETE</div><div class="money" style="font-size:90px">$1,000</div><h1 id="winner"></h1><div class="rows" id="rows"></div><button id="newDrop" class="btn white">PLAY AGAIN</button></section>
-</div><script>
-const socket=io();let me=null,s=null,done=false,token=null,timer=null;const $=id=>document.getElementById(id);const titles={button:"THE BUTTON",stack:"STACK",flappy:"FLAPPY"};const rules={button:"Stop as close to 5.000 seconds as possible.",stack:"Build the tallest stack. One miss and you're out.",flappy:"One life. Go as far as you can."};
-const show=id=>["home","lobby","reveal","game","out","finished"].forEach(x=>$(x).classList.toggle("hidden",x!==id));
-$("join").onclick=()=>socket.emit("join",{name:$("name").value});$("start").onclick=()=>socket.emit("start-now");$("newDrop").onclick=()=>socket.emit("new-drop");
-socket.on("joined",d=>me=d.id);socket.on("join-error",m=>$("err").textContent=m);socket.on("state",x=>{s=x;render()});
+
+<section id="home" class="card hero"><div class="tag" id="dropNo">DROP #1</div><div class="money">$1,000</div><h1 id="homeTitle">The Drop is closed.</h1><p id="homeCopy">Wait for the host to open the next Drop.</p><div id="joinBox" class="join hidden"><input id="name" placeholder="Choose a username"><button id="join" class="btn white">JOIN DROP — FREE</button></div><div class="mini" style="margin-top:18px"><span id="waiting">0</span> players waiting</div><div id="err" style="color:#ff6a62;margin-top:8px"></div></section>
+
+<section id="lobby" class="card lobby hidden"><div class="tag">DROP CLOSES IN</div><div class="count" id="lclock">01:00</div><h2><span id="pc">0</span> PLAYERS IN</h2><p class="mini">When the clock hits zero, Round 1 begins. Half survive each level.</p><div class="chips" id="chips"></div></section>
+
+<section id="reveal" class="card reveal hidden"><div class="tag">ROUND <span id="revealRound">1</span></div><div class="mini">SURVIVORS · <span id="revealAlive">0</span></div><div class="mini" style="margin-top:32px">YOUR NEXT GAME IS...</div><div class="gname" id="gname">THE BUTTON</div><div class="mini" id="grule"></div></section>
+
+<section id="game" class="card game hidden"><div class="gameTop"><b>ROUND <span id="gameRound">1</span> · <span id="glabel"></span></b><span><span id="alive">0</span> SURVIVORS</span></div><div class="gameArea" id="area"></div></section>
+
+<section id="wait" class="card out hidden"><div class="tag">SCORE LOCKED</div><div class="rank">DONE</div><h2 id="scoreText"></h2><p class="mini">Waiting for every survivor to finish...</p></section>
+
+<section id="cut" class="card cut hidden"><div class="tag">ROUND <span id="cutRound">1</span> COMPLETE</div><div class="survivorCount"><span id="survivors">0</span> SURVIVE</div><h2>SURVIVOR LEADERBOARD</h2><p class="mini">Only the players below move on to the next level.</p><div class="rows" id="roundRows"></div><div class="mini" style="margin-top:18px">NEXT LEVEL STARTING...</div></section>
+
+<section id="spectate" class="card spectate hidden"><div class="tag">YOU'RE OUT</div><div class="rank">ELIMINATED</div><h2 id="elimRound"></h2><p class="mini">Stay. Watch the survivors fight for the Drop.</p><div class="survivorCount"><span id="specAlive">0</span> LEFT</div></section>
+
+<section id="finished" class="card out hidden"><div class="tag">DROP COMPLETE</div><div class="money" style="font-size:90px">$1,000</div><h1 id="winner"></h1><div class="rows" id="rows"></div><p class="mini">The host controls the next Drop.</p></section>
+</div>
+
+<button id="adminToggle" class="btn ghost admin">HOST</button>
+<div id="adminPanel" class="adminPanel hidden"><div class="tag">HOST CONTROL</div><p class="mini">Only the host can open or start a Drop.</p><input id="hostKey" type="password" placeholder="Host key"><div class="adminBtns"><button id="authHost" class="btn white">UNLOCK</button><button id="openDrop" class="btn green hidden">OPEN 60s LOBBY</button><button id="startDrop" class="btn red hidden">START NOW</button><button id="closeDrop" class="btn ghost hidden">CLOSE</button></div><div id="hostMsg" class="mini" style="margin-top:10px"></div></div>
+
+<script>
+const socket=io();let me=null,s=null,done=false,token=null,timer=null,isHost=false;
+const $=id=>document.getElementById(id);
+const titles={button:"THE BUTTON",stack:"STACK",flappy:"FLAPPY",reaction:"REACTION",center:"THE CENTER",taprush:"TAP RUSH",catcher:"CATCH",memory:"MEMORY",slider:"THE LINE",balance:"BALANCE",aim:"AIM",stoplight:"GREEN LIGHT"};
+const rules={button:"Stop as close to 5.000 seconds as possible.",stack:"Build the tallest stack. One miss and you're out.",flappy:"One life. Go as far as you can.",reaction:"Wait for GO. Tap as fast as possible.",center:"Stop the moving dot exactly in the center.",taprush:"Tap as many times as possible in 10 seconds.",catcher:"Move the basket and catch as many drops as possible.",memory:"Repeat the growing sequence for as long as you can.",slider:"Stop the moving line as close to the target as possible.",balance:"Keep the ball alive on the platform as long as possible.",aim:"Hit as many targets as possible in 12 seconds.",stoplight:"Tap the instant the light turns green."};
+const show=id=>["home","lobby","reveal","game","wait","cut","spectate","finished"].forEach(x=>$(x).classList.toggle("hidden",x!==id));
+$("join").onclick=()=>socket.emit("join",{name:$("name").value});
+$("adminToggle").onclick=()=>$("adminPanel").classList.toggle("hidden");
+$("authHost").onclick=()=>socket.emit("host-auth",{key:$("hostKey").value});
+$("openDrop").onclick=()=>socket.emit("host-open");
+$("startDrop").onclick=()=>socket.emit("host-start");
+$("closeDrop").onclick=()=>socket.emit("host-close");
+socket.on("joined",d=>me=d.id);
+socket.on("join-error",m=>$("err").textContent=m);
+socket.on("host-auth-result",d=>{isHost=d.ok;$("hostMsg").textContent=d.ok?"HOST UNLOCKED":"Wrong host key";renderHost()});
+socket.on("state",x=>{s=x;render();renderHost()});
 function esc(x){return String(x??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-function render(){if(!s)return;$("dropNo").textContent="DROP #"+s.dropNo;$("waiting").textContent=s.playerCount;const joined=!!(me&&s.players[me]);if(s.phase==="idle"){show("home");return}if(s.phase==="lobby"){if(!joined){show("home");return}show("lobby");$("pc").textContent=s.playerCount;$("chips").innerHTML=Object.values(s.players).map(p=>`<span class="chip">@${esc(p.name)}</span>`).join("");$("start").classList.toggle("hidden",s.host!==me);lclock();return}if(s.phase==="reveal"){if(!joined){show("home");$("err").textContent="This Drop already started.";return}show("reveal");$("gname").textContent=titles[s.game];$("grule").textContent=rules[s.game];return}if(s.phase==="playing"){if(!joined){show("home");return}if(s.players[me]?.finished){show("out");return}show("game");startGame();return}if(s.phase==="finished"){show("finished");final();return}}
+function renderHost(){if(!s)return;$("openDrop").classList.toggle("hidden",!isHost||!["closed","finished"].includes(s.phase));$("startDrop").classList.toggle("hidden",!isHost||s.phase!=="lobby");$("closeDrop").classList.toggle("hidden",!isHost||s.phase==="closed")}
+function render(){
+ if(!s)return;
+ $("dropNo").textContent="DROP #"+s.dropNo;
+ $("waiting").textContent=s.playerCount;
+ const joined=!!(me&&s.players[me]),p=joined?s.players[me]:null;
+ if(s.phase==="closed"){
+   show("home");$("homeTitle").textContent="The Drop is closed.";$("homeCopy").textContent="Wait for the host to open the next Drop.";$("joinBox").classList.add("hidden");return;
+ }
+ if(s.phase==="lobby"){
+   if(!joined){show("home");$("homeTitle").textContent="$1,000 Drop is OPEN.";$("homeCopy").textContent="You have 60 seconds. Enter now.";$("joinBox").classList.remove("hidden");return}
+   show("lobby");$("pc").textContent=s.playerCount;$("chips").innerHTML=Object.values(s.players).map(p=>`<span class="chip">@${esc(p.name)}</span>`).join("");lclock();return;
+ }
+ if(!joined){show("home");$("homeTitle").textContent="This Drop already started.";$("homeCopy").textContent="Wait for the next one.";$("joinBox").classList.add("hidden");return}
+ if(s.phase==="reveal"){
+   if(p.status==="eliminated"){showSpectate();return}
+   show("reveal");$("revealRound").textContent=s.round;$("revealAlive").textContent=s.activeCount;$("gname").textContent=titles[s.game];$("grule").textContent=rules[s.game];return;
+ }
+ if(s.phase==="playing"){
+   if(!s.activeIds.includes(me)){showSpectate();return}
+   if(p.finished){show("wait");return}
+   show("game");startGame();return;
+ }
+ if(s.phase==="cut"){
+   if(p.status==="eliminated"){showSpectate();return}
+   showCut();return;
+ }
+ if(s.phase==="finished"){show("finished");final();return}
+}
 function lclock(){clearInterval(timer);timer=setInterval(()=>{const n=Math.max(0,Math.ceil((s.lobbyDeadline-Date.now())/1000));$("lclock").textContent=String(Math.floor(n/60)).padStart(2,"0")+":"+String(n%60).padStart(2,"0")},100)}
-function startGame(){const t=s.startedAt+"-"+s.game;if(token===t)return;token=t;done=false;$("glabel").textContent=titles[s.game];$("alive").textContent=Object.values(s.players).filter(p=>!p.finished).length;if(s.game==="button")buttonGame();if(s.game==="stack")stackGame();if(s.game==="flappy")flappyGame()}
-function submit(score,label){if(done)return;done=true;socket.emit("result",{score});show("out");$("scoreText").textContent=label}
+function startGame(){const t=s.startedAt+"-"+s.round+"-"+s.game;if(token===t)return;token=t;done=false;$("gameRound").textContent=s.round;$("glabel").textContent=titles[s.game];$("alive").textContent=s.activeCount;if(s.game==="button")buttonGame();if(s.game==="stack")stackGame();if(s.game==="flappy")flappyGame();if(s.game==="reaction")reactionGame();if(s.game==="center")centerGame();if(s.game==="taprush")tapRushGame();if(s.game==="catcher")catcherGame();if(s.game==="memory")memoryGame();if(s.game==="slider")sliderGame();if(s.game==="balance")balanceGame();if(s.game==="aim")aimGame();if(s.game==="stoplight")stoplightGame()}
+function submit(score,label){if(done)return;done=true;socket.emit("result",{score});show("wait");$("scoreText").textContent=label}
+function showCut(){
+ show("cut");
+ $("cutRound").textContent=s.round;
+ $("survivors").textContent=s.activeCount;
+ const survivors=(s.roundResults||[]).filter(r=>r.survived);
+ $("roundRows").innerHTML=survivors.map((r,i)=>`<div class="row"><span>#${i+1}</span><span>@${esc(r.name)}</span><span>${fmt(r.score)}</span><span class="survive">SURVIVED</span></div>`).join("");
+}
+function showSpectate(){show("spectate");$("elimRound").textContent="Eliminated after Round "+Math.max(1,s.round);$("specAlive").textContent=s.activeCount}
+function final(){const rows=s.results||[];$("winner").textContent=rows[0]?("@"+rows[0].name+" WON THE DROP"):"DROP COMPLETE";$("rows").innerHTML=rows.slice(0,30).map((r,i)=>`<div class="row"><span>#${i+1}</span><span>@${esc(r.name)}</span><span>${r.roundsSurvived} rounds</span><span class="${i===0?"survive":""}">${i===0?"WINNER":""}</span></div>`).join("")}
+
 function buttonGame(){let run=false,start=0,raf;$("area").innerHTML=`<div><div class="instruction">Hold. Release as close to <b>5.000</b> seconds as possible.</div><div id="time" class="huge">0.000</div><br><button id="hold" class="hold">HOLD</button></div>`;const time=$("time"),hold=$("hold");const loop=()=>{if(!run)return;time.textContent=((performance.now()-start)/1000).toFixed(3);raf=requestAnimationFrame(loop)};hold.onpointerdown=e=>{e.preventDefault();run=true;start=performance.now();loop()};window.onpointerup=e=>{if(!run)return;run=false;cancelAnimationFrame(raf);const elapsed=performance.now()-start,diff=Math.abs(5000-elapsed);time.textContent=(elapsed/1000).toFixed(3);submit(diff,`${(elapsed/1000).toFixed(3)} sec · ${Math.round(diff)}ms away`)}} 
 function stackGame(){$("area").innerHTML=`<div><div class="instruction">Click to drop. Miss once and you're out.</div><div id="stack" class="stack"></div></div>`;const box=$("stack");let level=0,w=190,x=0,last=0,dir=1,speed=2.4,cur,raf,dead=false;function spawn(){cur=document.createElement("div");cur.className="block";cur.style.width=w+"px";cur.style.bottom=(level*29)+"px";box.appendChild(cur);x=0;move()}function move(){if(dead)return;x+=speed*dir;if(x<0){x=0;dir=1}if(x+w>box.clientWidth){x=box.clientWidth-w;dir=-1}cur.style.left=x+"px";raf=requestAnimationFrame(move)}box.onclick=()=>{if(dead)return;cancelAnimationFrame(raf);if(level===0){last=x;level++;spawn();return}const L=Math.max(x,last),R=Math.min(x+w,last+w),ov=R-L;if(ov<=3){dead=true;submit(level,`Stack height: ${level}`);return}w=ov;last=L;cur.style.left=L+"px";cur.style.width=w+"px";level++;speed+=.17;if(level>=18){dead=true;submit(level,`Stack height: ${level}`);return}spawn()};spawn()}
 function flappyGame(){$("area").innerHTML=`<div><div class="instruction">Tap to flap. One life.</div><div id="flap" class="flap"><div id="bird" class="bird"></div><div class="ground"></div></div></div>`;const box=$("flap"),bird=$("bird");let y=230,vy=0,score=0,dead=false,last=performance.now(),spawn=0,pipes=[];function add(){const gap=145,top=50+Math.random()*(box.clientHeight-gap-120),a=document.createElement("div"),b=document.createElement("div");a.className=b.className="pipe";a.style.height=top+"px";a.style.top="0";b.style.height=(box.clientHeight-top-gap)+"px";b.style.bottom="18px";box.append(a,b);pipes.push({x:box.clientWidth+10,top,gap,a,b,passed:false})}function flap(){if(!dead)vy=-7.5}box.onclick=flap;window.onkeydown=e=>{if(e.code==="Space"){e.preventDefault();flap()}};function die(){if(dead)return;dead=true;submit(score,`Distance: ${score}`)}function frame(now){if(dead)return;const dt=Math.min(30,now-last)/16.67;last=now;vy+=.42*dt;y+=vy*dt;bird.style.top=y+"px";spawn+=dt;if(spawn>95){spawn=0;add()}pipes.forEach(p=>{p.x-=3.3*dt;p.a.style.left=p.x+"px";p.b.style.left=p.x+"px";if(!p.passed&&p.x+70<90){p.passed=true;score++}if(p.x<124&&p.x+70>90&&(y<p.top||y+34>p.top+p.gap))die()});if(y<0||y+34>box.clientHeight-18)die();requestAnimationFrame(frame)}add();requestAnimationFrame(frame)}
+
+function reactionGame(){
+ $("area").innerHTML=`<div><div class="instruction">WAIT. Tap only when the screen says GO.</div><button id="react" class="hold" style="background:#222">WAIT</button></div>`;
+ const b=$("react");let ready=false,shown=0,finished=false;
+ const delay=1200+Math.random()*3200;
+ const to=setTimeout(()=>{if(finished)return;ready=true;shown=performance.now();b.textContent="GO!";b.style.background="var(--green)"},delay);
+ b.onclick=()=>{
+   if(finished)return;
+   if(!ready){finished=true;clearTimeout(to);submit(99999,"False start");return}
+   finished=true;const ms=performance.now()-shown;submit(ms,`${Math.round(ms)} ms reaction`);
+ };
+}
+function centerGame(){
+ $("area").innerHTML=`<div style="width:min(760px,92vw)"><div class="instruction">Tap once. Stop the dot as close to the center as possible.</div><div id="track" style="height:90px;position:relative;border:1px solid #333;border-radius:18px;background:#080808"><div style="position:absolute;left:50%;top:0;bottom:0;width:3px;background:var(--green)"></div><div id="dot" style="position:absolute;top:27px;width:36px;height:36px;border-radius:50%;background:var(--red)"></div></div></div>`;
+ const tr=$("track"),dot=$("dot");let x=0,d=1,raf,finished=false;
+ function frame(){if(finished)return;x+=5*d;if(x<0){x=0;d=1}if(x>tr.clientWidth-36){x=tr.clientWidth-36;d=-1}dot.style.left=x+"px";raf=requestAnimationFrame(frame)}
+ tr.onclick=()=>{if(finished)return;finished=true;cancelAnimationFrame(raf);const center=tr.clientWidth/2,dc=x+18;const diff=Math.abs(center-dc);submit(diff,`${diff.toFixed(1)} px from center`)};
+ frame();
+}
+function tapRushGame(){
+ let taps=0,left=10,ended=false;
+ $("area").innerHTML=`<div><div class="instruction">10 seconds. Tap as fast as you can.</div><div class="huge"><span id="taps">0</span></div><button id="tapbtn" class="hold">TAP</button><p class="mini"><span id="tapleft">10.0</span>s left</p></div>`;
+ const st=performance.now(),b=$("tapbtn");
+ b.onclick=()=>{if(!ended){taps++;$("taps").textContent=taps}};
+ const iv=setInterval(()=>{left=Math.max(0,10-(performance.now()-st)/1000);$("tapleft").textContent=left.toFixed(1);if(left<=0){clearInterval(iv);ended=true;submit(taps,`${taps} taps`) }},50);
+}
+function catcherGame(){
+ $("area").innerHTML=`<div><div class="instruction">Move your mouse/finger. Catch the falling dots for 15 seconds.</div><div id="catchbox" style="width:min(700px,94vw);height:500px;position:relative;overflow:hidden;border:1px solid #333;border-radius:18px;background:#081018"><div id="basket" style="position:absolute;bottom:15px;width:90px;height:20px;border-radius:10px;background:var(--green)"></div></div></div>`;
+ const box=$("catchbox"),basket=$("basket");let bx=box.clientWidth/2-45,score=0,drops=[],done2=false,start=performance.now(),lastSpawn=0;
+ function move(clientX){const r=box.getBoundingClientRect();bx=Math.max(0,Math.min(box.clientWidth-90,clientX-r.left-45));basket.style.left=bx+"px"}
+ box.onpointermove=e=>move(e.clientX);
+ box.onpointerdown=e=>move(e.clientX);
+ function spawn(){const el=document.createElement("div");el.style.cssText="position:absolute;width:24px;height:24px;border-radius:50%;background:var(--gold);top:-25px";box.appendChild(el);drops.push({el,x:Math.random()*(box.clientWidth-24),y:-25});}
+ function frame(now){if(done2)return;const elapsed=(now-start)/1000;if(elapsed>=15){done2=true;submit(score,`${score} catches`);return}if(now-lastSpawn>520){lastSpawn=now;spawn()}drops.forEach(o=>{o.y+=4.2;o.el.style.left=o.x+"px";o.el.style.top=o.y+"px";if(o.y>450&&o.y<485&&o.x+24>bx&&o.x<bx+90){score++;o.y=999} });drops=drops.filter(o=>{if(o.y>520){o.el.remove();return false}return true});requestAnimationFrame(frame)}
+ requestAnimationFrame(frame);
+}
+function memoryGame(){
+ const colors=["#ff3b30","#2bd67b","#f3c44e","#4c8dff"];let seq=[],input=[],level=0,busy=true,dead=false;
+ $("area").innerHTML=`<div><div class="instruction">Watch the sequence. Then repeat it.</div><div id="mem" style="display:grid;grid-template-columns:repeat(2,150px);gap:12px;justify-content:center"></div><p>Round <b id="ml">0</b></p></div>`;
+ const mem=$("mem");
+ colors.forEach((c,i)=>{const b=document.createElement("button");b.style.cssText=`width:150px;height:150px;border:0;border-radius:22px;background:${c};opacity:.45`;b.onclick=()=>press(i);mem.appendChild(b)});
+ const btns=[...mem.children];
+ const flash=i=>new Promise(res=>{btns[i].style.opacity="1";setTimeout(()=>{btns[i].style.opacity=".45";setTimeout(res,120)},380)});
+ async function next(){level++;$("ml").textContent=level;seq.push(Math.floor(Math.random()*4));input=[];busy=true;await new Promise(r=>setTimeout(r,350));for(const i of seq)await flash(i);busy=false}
+ function press(i){if(busy||dead)return;input.push(i);flash(i);const pos=input.length-1;if(seq[pos]!==i){dead=true;submit(level-1,`${level-1} rounds completed`);return}if(input.length===seq.length){busy=true;if(level>=12){dead=true;submit(level,`${level} rounds completed`)}else setTimeout(next,500)}}
+ next();
+}
+function sliderGame(){
+ $("area").innerHTML=`<div style="width:min(760px,92vw)"><div class="instruction">Tap to stop the line inside the tiny target.</div><div id="sltrack" style="height:100px;position:relative;border:1px solid #333;border-radius:18px;background:#080808"><div id="target" style="position:absolute;left:62%;top:0;bottom:0;width:24px;background:#163d28"></div><div id="line" style="position:absolute;top:10px;bottom:10px;width:5px;background:var(--red)"></div></div></div>`;
+ const tr=$("sltrack"),line=$("line"),target=$("target");let x=0,d=1,dead=false,raf;
+ function f(){if(dead)return;x+=7*d;if(x<0){x=0;d=1}if(x>tr.clientWidth-5){x=tr.clientWidth-5;d=-1}line.style.left=x+"px";raf=requestAnimationFrame(f)}
+ tr.onclick=()=>{dead=true;cancelAnimationFrame(raf);const targetCenter=tr.clientWidth*.62+12;const diff=Math.abs((x+2.5)-targetCenter);submit(diff,`${diff.toFixed(1)} px from target`)};
+ f();
+}
+function balanceGame(){
+ $("area").innerHTML=`<div><div class="instruction">Move left/right to keep the ball on the platform.</div><div id="bal" style="width:min(700px,94vw);height:480px;position:relative;border:1px solid #333;border-radius:18px;overflow:hidden;background:#080d10"><div id="plat" style="position:absolute;bottom:70px;left:250px;width:180px;height:18px;border-radius:9px;background:var(--green)"></div><div id="ball" style="position:absolute;width:32px;height:32px;border-radius:50%;background:var(--gold);left:324px;bottom:88px"></div></div></div>`;
+ const box=$("bal"),plat=$("plat"),ball=$("ball");let px=box.clientWidth/2-90,bx=box.clientWidth/2-16,vx=1.5,dead=false,start=performance.now();
+ function move(clientX){const r=box.getBoundingClientRect();px=Math.max(0,Math.min(box.clientWidth-180,clientX-r.left-90));plat.style.left=px+"px"}
+ box.onpointermove=e=>move(e.clientX);box.onpointerdown=e=>move(e.clientX);
+ function f(){if(dead)return;bx+=vx;if(bx<0||bx>box.clientWidth-32)vx*=-1;ball.style.left=bx+"px";const on=bx+32>px&&bx<px+180;if(!on){dead=true;const ms=performance.now()-start;submit(ms,`${(ms/1000).toFixed(2)} sec balanced`);return}vx+=(Math.random()-.5)*.08;requestAnimationFrame(f)}
+ f();
+}
+function aimGame(){
+ let score=0,end=performance.now()+12000;
+ $("area").innerHTML=`<div><div class="instruction">12 seconds. Hit every target you can.</div><div id="aimbox" style="width:min(760px,94vw);height:500px;position:relative;border:1px solid #333;border-radius:18px;background:#080808"></div><p><b id="aimscore">0</b> hits</p></div>`;
+ const box=$("aimbox");
+ function spawn(){box.innerHTML="";const t=document.createElement("button");const size=34+Math.random()*42;t.style.cssText=`position:absolute;width:${size}px;height:${size}px;border:0;border-radius:50%;background:var(--red);left:${Math.random()*(box.clientWidth-size)}px;top:${Math.random()*(box.clientHeight-size)}px`;t.onclick=e=>{e.stopPropagation();score++;$("aimscore").textContent=score;spawn()};box.appendChild(t)}
+ spawn();const iv=setInterval(()=>{if(performance.now()>=end){clearInterval(iv);box.innerHTML="";submit(score,`${score} targets hit`)}},50);
+}
+function stoplightGame(){
+ $("area").innerHTML=`<div><div class="instruction">Do not tap early. Tap the instant it turns GREEN.</div><button id="light" class="hold" style="background:var(--red)">WAIT</button></div>`;
+ const b=$("light");let green=false,at=0,finished=false;const delay=1500+Math.random()*3500;
+ const to=setTimeout(()=>{if(finished)return;green=true;at=performance.now();b.style.background="var(--green)";b.textContent="GO!"},delay);
+ b.onclick=()=>{if(finished)return;if(!green){finished=true;clearTimeout(to);submit(99999,"False start");return}finished=true;const ms=performance.now()-at;submit(ms,`${Math.round(ms)} ms`)};
+}
+
 function final(){const rows=s.results||[];$("winner").textContent=rows[0]?("@"+rows[0].name+" WON THE DROP"):"DROP COMPLETE";$("rows").innerHTML=rows.slice(0,20).map((r,i)=>`<div class="row"><span>#${i+1} @${esc(r.name)}</span><span>${fmt(r.score)}</span></div>`).join("");$("newDrop").classList.remove("hidden")}
-function fmt(v){if(s.game==="button")return Math.round(v)+" ms off";if(s.game==="stack")return v+" blocks";return v+" pts"}
+function fmt(v){
+ if(["button","reaction","center","slider","stoplight"].includes(s.game))return Math.round(v)+(s.game==="center"||s.game==="slider"?" px off":" ms");
+ if(s.game==="stack")return v+" blocks";
+ if(s.game==="balance")return (v/1000).toFixed(2)+" sec";
+ if(s.game==="memory")return v+" rounds";
+ if(s.game==="catcher")return v+" catches";
+ if(s.game==="aim")return v+" hits";
+ if(s.game==="taprush")return v+" taps";
+ return v+" pts";
+}
 </script></body></html>
