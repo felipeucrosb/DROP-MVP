@@ -151,11 +151,34 @@ function balanceGame(){
  f();
 }
 function aimGame(){
- let score=0,end=performance.now()+12000;
+ let score=0,ended=false;
+ const duration=12000;
  $("area").innerHTML=`<div><div class="instruction">12 seconds. Hit every target you can.</div><div id="aimbox" style="width:min(760px,94vw);height:500px;position:relative;border:1px solid #333;border-radius:18px;background:#080808"></div><p><b id="aimscore">0</b> hits</p></div>`;
- const box=$("aimbox");
- function spawn(){box.innerHTML="";const t=document.createElement("button");const size=34+Math.random()*42;t.style.cssText=`position:absolute;width:${size}px;height:${size}px;border:0;border-radius:50%;background:var(--red);left:${Math.random()*(box.clientWidth-size)}px;top:${Math.random()*(box.clientHeight-size)}px`;t.onclick=e=>{e.stopPropagation();score++;$("aimscore").textContent=score;spawn()};box.appendChild(t)}
- spawn();const iv=setInterval(()=>{if(performance.now()>=end){clearInterval(iv);box.innerHTML="";submit(score,`${score} targets hit`)}},50);
+ const box=$("aimbox"),scoreEl=$("aimscore");
+ function spawn(){
+   if(ended)return;
+   box.innerHTML="";
+   const t=document.createElement("button");
+   const size=34+Math.random()*42;
+   t.style.cssText=`position:absolute;width:${size}px;height:${size}px;border:0;border-radius:50%;background:var(--red);left:${Math.random()*Math.max(1,box.clientWidth-size)}px;top:${Math.random()*Math.max(1,box.clientHeight-size)}px`;
+   t.onclick=e=>{
+     e.preventDefault();e.stopPropagation();
+     if(ended)return;
+     score++;
+     scoreEl.textContent=score;
+     spawn();
+   };
+   box.appendChild(t);
+ }
+ spawn();
+
+ // This always fires, including when score === 0.
+ setTimeout(()=>{
+   if(ended)return;
+   ended=true;
+   box.innerHTML="";
+   submit(score,`${score} targets hit`);
+ },duration);
 }
 function stoplightGame(){
  $("area").innerHTML=`<div><div class="instruction">Do not tap early. Tap the instant it turns GREEN.</div><button id="light" class="hold" style="background:var(--red)">WAIT</button></div>`;

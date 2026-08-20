@@ -50,3 +50,11 @@ After every level, all players see a dedicated SURVIVOR LEADERBOARD before the n
 - The screen shows how many players remain.
 - Eliminated players can also see who survived.
 - After the leaderboard pause, the next level begins automatically.
+
+## V1.5 — Round Stall Fix
+- Added a server-side hard round deadline.
+- A round can no longer wait forever for a browser that failed to submit.
+- Any unfinished survivor after 22 seconds receives the worst possible score for that game.
+- The tournament then automatically cuts to the top 50% and continues.
+- AIM was rewritten so a player who hits zero targets still submits a valid score of 0 after 12 seconds.
+- This specifically fixes 2-player games where one player's missing result could freeze progression.

@@ -22,7 +22,7 @@ let s={
   prize:1000,
   hostSockets:{}
 };
-let lobbyTimer=null,revealTimer=null,cutTimer=null;
+let lobbyTimer=null,revealTimer=null,cutTimer=null,roundHardTimer=null;
 
 const allPlayers=()=>Object.entries(s.players).map(([id,p])=>({id,...p}));
 const activePlayers=()=>s.activeIds.map(id=>[id,s.players[id]]).filter(x=>x[1]);
@@ -74,7 +74,7 @@ function publicState(){
 }
 const emit=()=>io.emit("state",publicState());
 
-function clearTimers(){clearTimeout(lobbyTimer);clearTimeout(revealTimer);clearTimeout(cutTimer)}
+function clearTimers(){clearTimeout(lobbyTimer);clearTimeout(revealTimer);clearTimeout(cutTimer);clearTimeout(roundHardTimer)}
 
 function resetForClosed(){
   clearTimers();
@@ -138,6 +138,23 @@ function startRoundReveal(){
     s.phase="playing";
     s.startedAt=Date.now();
     emit();
+
+    // HARD ROUND DEADLINE:
+    // If any browser fails to submit (lost focus, mobile sleep, game bug, disconnect),
+    // automatically assign the worst score and advance the tournament.
+    clearTimeout(roundHardTimer);
+    roundHardTimer=setTimeout(()=>{
+      if(s.phase!=="playing")return;
+      for(const id of s.activeIds){
+        const p=s.players[id];
+        if(!p || p.finished)continue;
+        p.finished=true;
+        // Worst possible score depends on the scoring direction.
+        p.roundScore=lowerIsBetter(s.game)?99999:-1;
+        if(p.status!=="disconnected")p.status="timeout";
+      }
+      cutRound();
+    },22000);
   },3200);
 }
 function lowerIsBetter(game){
@@ -161,6 +178,7 @@ function submit(id,score){
 }
 function cutRound(){
   if(s.phase!=="playing")return;
+  clearTimeout(roundHardTimer);
   const rows=s.activeIds.map(id=>({
     id,
     name:s.players[id].name,
