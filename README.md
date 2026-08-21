@@ -62,3 +62,10 @@ DROPADMIN
 - Each eliminated username shows the level where they were eliminated.
 - Most recently eliminated players appear first.
 - The old post-round Cut Line layout has been removed.
+
+## V2.1 — Mobile UX fixes
+- Persistent lobby warning tells players not to close, refresh, switch tabs/browsers, or leave during the Drop.
+- Tap Rush now uses pointer events and a large no-zoom tap zone for iPhone/mobile.
+- Game controls disable browser touch gestures where appropriate.
+- Balance no longer follows the finger position. It now uses explicit LEFT and RIGHT hold controls, matching the mental model of balancing a moving ball.
+- Balance still ramps difficulty progressively.

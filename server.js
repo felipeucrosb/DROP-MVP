@@ -291,4 +291,4 @@ io.on("connection",sock=>{
     emit();
   });
 });
-server.listen(process.env.PORT||3000,()=>console.log("DROP V2.0 Survivors + Eliminated ready"));
+server.listen(process.env.PORT||3000,()=>console.log("DROP V2.1 Mobile Game Fixes ready"));
