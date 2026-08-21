@@ -69,3 +69,19 @@ DROPADMIN
 - Game controls disable browser touch gestures where appropriate.
 - Balance no longer follows the finger position. It now uses explicit LEFT and RIGHT hold controls, matching the mental model of balancing a moving ball.
 - Balance still ramps difficulty progressively.
+
+## V2.2 — Final Results + Next Drop
+- DROP COMPLETE now has a stronger winner hero treatment.
+- Full final standings show every participant, not just the top 20/30.
+- Top 3 receive podium-style visual markers.
+- Final participant count is shown.
+- New CTA: WAIT FOR THE NEXT DROP.
+- CTA returns the player to the lobby/waiting experience so the next prize opportunity stays front and center.
+
+## V2.3 — Flappy difficulty ramp
+- Flappy begins significantly slower.
+- Initial pipe gap increased from 145px to ~190px.
+- Lower starting gravity and slightly softer flap.
+- Pipe speed ramps from 1.75 to 3.30 over ~18 seconds.
+- Pipe gap progressively tightens back toward the original difficulty.
+- First obstacle is delayed briefly so the player can understand the control.

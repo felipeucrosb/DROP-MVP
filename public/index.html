@@ -2,7 +2,7 @@
 <title>DROP V1.6</title><script src="/socket.io/socket.io.js"></script><style>
 :root{--bg:#050505;--line:#292929;--txt:#fff;--mut:#909090;--red:#ff3b30;--green:#2bd67b;--gold:#f3c44e}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#2a0b0a 0,#060606 30%,#030303 100%);color:var(--txt);font-family:Inter,system-ui,sans-serif;min-height:100vh}button,input{font:inherit}.wrap{max-width:1180px;margin:auto;padding:18px}.card{background:linear-gradient(145deg,#111,#090909);border:1px solid var(--line);border-radius:28px;box-shadow:0 30px 80px #0008}.hidden{display:none!important}header{display:flex;justify-content:space-between;align-items:center;margin:8px 0 18px}.brand{font-size:28px;font-weight:1000}.brand span{color:var(--red)}.mini{font-size:12px;color:var(--mut)}.hero,.lobby,.reveal,.out,.cut,.spectate{min-height:650px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px}.tag{color:var(--red);font-size:12px;font-weight:1000;letter-spacing:.14em}.money{font-size:clamp(82px,15vw,180px);font-weight:1000;letter-spacing:-.08em;line-height:.9;margin:18px}.hero h1{font-size:clamp(38px,5vw,64px);line-height:.95;margin:10px}.hero p{color:var(--mut);max-width:620px}.join{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px}.join input{width:280px;border:1px solid #333;background:#0b0b0b;color:#fff;border-radius:999px;padding:15px 18px;outline:none}.btn{border:0;border-radius:999px;padding:15px 22px;font-weight:900;cursor:pointer}.white{background:#fff;color:#000}.red{background:var(--red);color:#fff}.green{background:var(--green);color:#03120a}.ghost{background:#111;color:#fff;border:1px solid #333}.count{font-size:clamp(78px,12vw,150px);font-weight:1000;color:var(--red);letter-spacing:-.06em}.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:950px}.chip{padding:8px 12px;border:1px solid #2b2b2b;background:#111;border-radius:999px;font-size:12px}.botchip{border-color:#6d5820;color:var(--gold)}.gname{font-size:clamp(64px,12vw,150px);font-weight:1000;color:var(--red);letter-spacing:-.08em}.game{min-height:700px;overflow:hidden}.gameTop{display:flex;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #222}.gameArea{min-height:620px;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px}.instruction{color:var(--mut);margin-bottom:18px}.huge{font-size:clamp(68px,13vw,140px);font-weight:1000}.hold{width:min(340px,72vw);height:min(340px,72vw);border-radius:50%;border:0;background:var(--red);color:#fff;font-size:28px;font-weight:1000;cursor:pointer}.stack{width:min(480px,90vw);height:500px;position:relative;overflow:hidden;border-bottom:2px solid #444;background:#080808}.block{position:absolute;height:28px;background:var(--red);border-radius:5px}.flap{width:min(700px,94vw);height:520px;position:relative;overflow:hidden;border:1px solid #222;border-radius:18px;background:linear-gradient(#0b1720,#07100c)}.bird{position:absolute;left:90px;top:230px;width:34px;height:34px;border-radius:50%;background:var(--gold)}.pipe{position:absolute;width:70px;background:var(--green)}.ground{position:absolute;left:0;right:0;bottom:0;height:18px;background:#17331d}.rank{font-size:clamp(72px,14vw,150px);font-weight:1000;color:var(--red);letter-spacing:-.06em}.survivorCount{font-size:clamp(72px,12vw,138px);font-weight:1000;color:var(--green);letter-spacing:-.07em}.rows{width:min(820px,100%);margin:18px auto}.row{display:grid;grid-template-columns:60px 1fr 130px 120px;gap:10px;text-align:left;padding:13px 0;border-bottom:1px solid #222;align-items:center}.survive{color:var(--green);font-weight:1000}.eliminate{color:#ff6961;font-weight:1000}.outrow{opacity:.52}.protected{color:#8ad9ff;font-weight:900}.bot{color:var(--gold);font-size:10px;margin-left:7px;border:1px solid #67551c;border-radius:999px;padding:2px 6px}.cutline{height:2px;background:var(--red);margin:8px 0;position:relative}.cutline:after{content:"ELIMINATION ZONE";position:absolute;right:0;top:-18px;font-size:9px;color:var(--red);font-weight:1000}.admin{position:fixed;right:16px;bottom:16px;z-index:20}.adminPanel{position:fixed;right:16px;bottom:70px;width:330px;padding:18px;background:#111;border:1px solid #333;border-radius:20px;z-index:20}.adminPanel input{width:100%;padding:12px;border-radius:10px;border:1px solid #333;background:#080808;color:#fff}.adminBtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.countdownOverlay{position:fixed;inset:0;z-index:50;background:#050505ee;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px}.tutorialIcon{font-size:70px;margin-bottom:18px}.tutorialText{font-size:clamp(22px,5vw,42px);font-weight:900;max-width:700px}.countNum{font-size:clamp(100px,22vw,220px);font-weight:1000;color:var(--red);line-height:1;margin-top:24px}.diffEasy{color:#2bd67b}.diffMedium{color:#f3c44e}.diffHard{color:#ff7b38}.diffExtreme{color:#ff3b30}.dualBoard{width:min(1050px,100%);display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}.boardPane{background:#0b0b0b;border:1px solid #292929;border-radius:22px;padding:18px;text-align:left}.survivorsPane{border-color:#164f31}.eliminatedPane{border-color:#5a1f1f}.boardTitle{font-size:22px;font-weight:1000;margin-bottom:10px}.eliminatedPane .row{opacity:.58}.survivorsPane .row{opacity:1}@media(max-width:800px){.dualBoard{grid-template-columns:1fr}}.stayWarning{width:min(720px,94vw);margin:14px auto 20px;padding:14px 18px;border:1px solid #6b2a27;border-radius:16px;background:#24100f;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}.stayWarning b{color:#ff6259;font-size:14px}.stayWarning span{font-size:12px;color:#e7d7d6}.gameArea,.gameArea button,.gameArea canvas{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.tapZone{width:min(620px,92vw);height:300px;border:2px solid #333;border-radius:28px;background:#111;color:white;font-size:42px;font-weight:1000;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-user-select:none;user-select:none}.tapZone:active{transform:scale(.99)}.balanceControls{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:min(700px,94vw);margin:14px auto 0}.balanceBtn{height:90px;border-radius:20px;border:1px solid #333;background:#151515;color:white;font-size:34px;font-weight:1000;touch-action:manipulation;-webkit-user-select:none;user-select:none}@media(max-width:700px){.row{grid-template-columns:42px 1fr 80px}.row span:last-child{display:none}}
+.countdownOverlay{position:fixed;inset:0;z-index:50;background:#050505ee;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px}.tutorialIcon{font-size:70px;margin-bottom:18px}.tutorialText{font-size:clamp(22px,5vw,42px);font-weight:900;max-width:700px}.countNum{font-size:clamp(100px,22vw,220px);font-weight:1000;color:var(--red);line-height:1;margin-top:24px}.diffEasy{color:#2bd67b}.diffMedium{color:#f3c44e}.diffHard{color:#ff7b38}.diffExtreme{color:#ff3b30}.dualBoard{width:min(1050px,100%);display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:24px}.boardPane{background:#0b0b0b;border:1px solid #292929;border-radius:22px;padding:18px;text-align:left}.survivorsPane{border-color:#164f31}.eliminatedPane{border-color:#5a1f1f}.boardTitle{font-size:22px;font-weight:1000;margin-bottom:10px}.eliminatedPane .row{opacity:.58}.survivorsPane .row{opacity:1}@media(max-width:800px){.dualBoard{grid-template-columns:1fr}}.stayWarning{width:min(720px,94vw);margin:14px auto 20px;padding:14px 18px;border:1px solid #6b2a27;border-radius:16px;background:#24100f;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}.stayWarning b{color:#ff6259;font-size:14px}.stayWarning span{font-size:12px;color:#e7d7d6}.gameArea,.gameArea button,.gameArea canvas{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}.tapZone{width:min(620px,92vw);height:300px;border:2px solid #333;border-radius:28px;background:#111;color:white;font-size:42px;font-weight:1000;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-user-select:none;user-select:none}.tapZone:active{transform:scale(.99)}.balanceControls{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:min(700px,94vw);margin:14px auto 0}.balanceBtn{height:90px;border-radius:20px;border:1px solid #333;background:#151515;color:white;font-size:34px;font-weight:1000;touch-action:manipulation;-webkit-user-select:none;user-select:none}.winnerHero{width:min(850px,96vw);padding:24px 12px 12px;text-align:center}.winnerCrown{font-size:58px;line-height:1}.winnerSub{font-weight:1000;letter-spacing:2px;color:var(--green)}.finalBoardWrap{width:min(900px,96vw);margin:20px auto;text-align:left}.finalRows{max-height:52vh;overflow:auto;border:1px solid #292929;border-radius:20px;padding:8px;background:#090909}.finalRows .row:first-child{background:#142319;border-color:#2b6d43;transform:scale(1.01)}.finalRows .row:nth-child(2){background:#171717}.finalRows .row:nth-child(3){background:#131313}.placeMedal{font-size:20px}.nextDropBox{width:min(760px,94vw);margin:22px auto 4px;padding:24px;border:1px solid #245b38;border-radius:22px;background:#0c1711;text-align:center}.nextDropBox h2{margin:8px 0}.hostNextNote{margin-top:12px}@media(max-width:700px){.row{grid-template-columns:42px 1fr 80px}.row span:last-child{display:none}}
 </style></head><body><div class="wrap">
 <header><div class="brand">DR<span>O</span>P</div><div class="mini">EVERYONE GETS ONE SHOT.</div></header>
 <section id="home" class="card hero"><div class="tag" id="dropNo">DROP #1</div><div class="money">$10</div><h1 id="homeTitle">The Drop is closed.</h1><p id="homeCopy">Wait for the host to open the next Drop.</p><div id="joinBox" class="join hidden"><input id="name" placeholder="Choose a username"><button id="join" class="btn white">JOIN DROP — FREE</button></div><div class="mini" style="margin-top:18px"><span id="waiting">0</span> total in lobby</div><div id="err" style="color:#ff6a62;margin-top:8px"></div></section>
@@ -25,7 +25,26 @@
 <div class="mini" style="margin-top:18px">NEXT LEVEL STARTING...</div>
 </section>
 <section id="spectate" class="card spectate hidden"><div class="tag">YOU'RE OUT</div><div class="rank">ELIMINATED</div><h2>LIVE SURVIVOR LEADERBOARD</h2><p class="mini">Stay and watch the elimination zone move live.</p><div class="survivorCount"><span id="specAlive">0</span> LEFT</div><div class="rows" id="liveRows"></div></section>
-<section id="finished" class="card out hidden"><div class="tag">DROP COMPLETE</div><div class="money" style="font-size:90px">$10</div><h1 id="winner"></h1><div class="rows" id="rows"></div><p class="mini">The host controls the next Drop.</p></section>
+<section id="finished" class="card out hidden">
+<div class="tag">DROP COMPLETE</div>
+<div class="winnerHero">
+  <div class="winnerCrown">🏆</div>
+  <div class="money" style="font-size:90px">$10</div>
+  <h1 id="winner"></h1>
+  <p class="winnerSub">ONE DROP. ONE WINNER.</p>
+</div>
+<div class="finalBoardWrap">
+  <div class="boardTitle">FINAL STANDINGS — <span id="finalCount">0</span> PLAYERS</div>
+  <div class="rows finalRows" id="rows"></div>
+</div>
+<div class="nextDropBox">
+  <div class="tag">YOU'RE NOT DONE YET</div>
+  <h2>THE NEXT DROP COULD BE YOURS.</h2>
+  <p class="mini">Stay ready for the next chance to win real prizes.</p>
+  <button id="nextDropBtn" class="btn green">WAIT FOR THE NEXT DROP</button>
+</div>
+<p class="mini hostNextNote">The host controls when the next Drop opens.</p>
+</section>
 </div>
 <button id="adminToggle" class="btn ghost admin">HOST</button>
 <div id="adminPanel" class="adminPanel hidden"><div class="tag">HOST CONTROL</div><p class="mini">Only you can open or start the Drop.</p><input id="hostKey" type="password" placeholder="Host key"><div class="adminBtns"><button id="authHost" class="btn white">UNLOCK</button><button id="openDrop" class="btn green hidden">OPEN 3 MIN LOBBY</button><button id="startDrop" class="btn red hidden">START NOW</button><button id="closeDrop" class="btn ghost hidden">CLOSE</button></div><div id="hostMsg" class="mini" style="margin-top:10px"></div></div>
@@ -129,22 +148,57 @@ function showSpectate(){
  active.forEach((p,i)=>{if(i===cut)out+='<div class="cutline"></div>';const val=p.liveScore==null?"PLAYING":fmt(p.liveScore);out+=`<div class="row"><span>#${i+1}</span><span>@${esc(p.name)}</span><span>${val}</span><span class="${i<cut?"survive":"eliminate"}">${i<cut?"SAFE NOW":"CUT NOW"}</span></div>`});
  $("liveRows").innerHTML=out||'<p class="mini">Waiting for live scores...</p>';
 }
-function final(){const rows=s.results||[];$("winner").textContent=rows[0]?("@"+rows[0].name+" WON THE DROP"):"DROP COMPLETE";$("rows").innerHTML=rows.slice(0,30).map((r,i)=>`<div class="row"><span>#${i+1}</span><span>@${esc(r.name)}</span><span>${r.roundsSurvived} levels</span><span class="${i===0?"survive":""}">${i===0?"WINNER":""}</span></div>`).join("")}
+function final(){
+ const rows=s.results||[];
+ $("winner").textContent=rows[0]?("@"+rows[0].name+" WON THE DROP"):"DROP COMPLETE";
+ $("finalCount").textContent=rows.length;
+ const medal=i=>i===0?"🏆":i===1?"🥈":i===2?"🥉":"#"+(i+1);
+ $("rows").innerHTML=rows.map((r,i)=>`<div class="row"><span class="placeMedal">${medal(i)}</span><span>@${esc(r.name)}${r.isBot?'<span class="bot">CPU</span>':''}</span><span>${r.roundsSurvived!=null?r.roundsSurvived+" levels":(r.score!=null?fmt(r.score):"")}</span><span class="${i===0?"survive":""}">${i===0?"WINNER":i===1?"2ND":i===2?"3RD":""}</span></div>`).join("");
+ const b=$("nextDropBtn");
+ if(b)b.onclick=()=>{show("lobby");window.scrollTo({top:0,behavior:"smooth"})};
+}
 
 function buttonGame(){let run=false,start=0,raf;$("area").innerHTML=`<div><div class="instruction">Hold. Release as close to <b>5.000</b> seconds as possible.</div><div id="time" class="huge">0.000</div><br><button id="hold" class="hold">HOLD</button></div>`;const time=$("time"),hold=$("hold");const loop=()=>{if(!run)return;time.textContent=((performance.now()-start)/1000).toFixed(3);raf=requestAnimationFrame(loop)};hold.onpointerdown=e=>{e.preventDefault();run=true;start=performance.now();loop()};window.onpointerup=e=>{if(!run)return;run=false;cancelAnimationFrame(raf);const elapsed=performance.now()-start,diff=Math.abs(5000-elapsed);time.textContent=(elapsed/1000).toFixed(3);submit(diff,`${(elapsed/1000).toFixed(3)} sec · ${Math.round(diff)}ms away`)}} 
 function stackGame(){$("area").innerHTML=`<div><div class="instruction">Click to drop. Miss once and you're out.</div><div id="stack" class="stack"></div></div>`;const box=$("stack");let level=0,w=190,x=0,last=0,dir=1,speed=2.4,cur,raf,dead=false;function spawn(){cur=document.createElement("div");cur.className="block";cur.style.width=w+"px";cur.style.bottom=(level*29)+"px";box.appendChild(cur);x=0;move()}function move(){if(dead)return;x+=speed*dir;if(x<0){x=0;dir=1}if(x+w>box.clientWidth){x=box.clientWidth-w;dir=-1}cur.style.left=x+"px";raf=requestAnimationFrame(move)}box.onclick=()=>{if(dead)return;cancelAnimationFrame(raf);if(level===0){last=x;level++;spawn();return}const L=Math.max(x,last),R=Math.min(x+w,last+w),ov=R-L;if(ov<=3){dead=true;submit(level,`Stack height: ${level}`);return}w=ov;last=L;cur.style.left=L+"px";cur.style.width=w+"px";level++;socket.emit("live-score",{score:level});speed+=.17*ramp(level/10);if(level>=18){dead=true;submit(level,`Stack height: ${level}`);return}spawn()};spawn()}
-function flappyGame(){$("area").innerHTML=`<div><div class="instruction">Tap to flap. One life.</div><div id="flap" class="flap"><div id="bird" class="bird"></div><div class="ground"></div></div></div>`;const box=$("flap"),bird=$("bird");let y=230,vy=0,score=0,dead=false,last=performance.now(),spawn=0,pipes=[];function add(){const gap=145,top=50+Math.random()*(box.clientHeight-gap-120),a=document.createElement("div"),b=document.createElement("div");a.className=b.className="pipe";a.style.height=top+"px";a.style.top="0";b.style.height=(box.clientHeight-top-gap)+"px";b.style.bottom="18px";box.append(a,b);pipes.push({x:box.clientWidth+10,top,gap,a,b,passed:false})}function flap(){if(!dead)vy=-7.5}box.onclick=flap;window.onkeydown=e=>{if(e.code==="Space"){e.preventDefault();flap()}};function die(){if(dead)return;dead=true;submit(score,`Distance: ${score}`)}function frame(now){if(dead)return;const dt=Math.min(30,now-last)/16.67;last=now;vy+=.42*dt;y+=vy*dt;bird.style.top=y+"px";spawn+=dt;if(spawn>95){spawn=0;add()}pipes.forEach(p=>{p.x-=3.3*dt;p.a.style.left=p.x+"px";p.b.style.left=p.x+"px";if(!p.passed&&p.x+70<90){p.passed=true;score++;socket.emit("live-score",{score})}if(p.x<124&&p.x+70>90&&(y<p.top||y+34>p.top+p.gap))die()});if(y<0||y+34>box.clientHeight-18)die();requestAnimationFrame(frame)}add();requestAnimationFrame(frame)}
-
-function reactionGame(){
- $("area").innerHTML=`<div><div class="instruction">WAIT. Tap only when the screen says GO.</div><button id="react" class="hold" style="background:#222">WAIT</button></div>`;
- const b=$("react");let ready=false,shown=0,finished=false;
- const delay=1200+Math.random()*3200;
- const to=setTimeout(()=>{if(finished)return;ready=true;shown=performance.now();b.textContent="GO!";b.style.background="var(--green)"},delay);
- b.onclick=()=>{
-   if(finished)return;
-   if(!ready){finished=true;clearTimeout(to);submit(99999,"False start");return}
-   finished=true;const ms=performance.now()-shown;submit(ms,`${Math.round(ms)} ms reaction`);
- };
+function flappyGame(){
+ $("area").innerHTML=`<div><div class="instruction">Tap to flap. Starts slow, then speeds up. One life.</div><div id="flap" class="flap"><div id="bird" class="bird"></div><div class="ground"></div></div></div>`;
+ const box=$("flap"),bird=$("bird");
+ let y=230,vy=0,score=0,dead=false,last=performance.now(),spawn=0,pipes=[],start=performance.now();
+ function add(){
+   // Extra-wide opening at the beginning; gradually tightens as the player learns the rhythm.
+   const elapsed=(performance.now()-start)/1000;
+   const gap=Math.max(145,190-Math.min(elapsed,18)*2.5);
+   const top=50+Math.random()*(box.clientHeight-gap-120),a=document.createElement("div"),b=document.createElement("div");
+   a.className=b.className="pipe";a.style.height=top+"px";a.style.top="0";
+   b.style.height=(box.clientHeight-top-gap)+"px";b.style.bottom="18px";
+   box.append(a,b);pipes.push({x:box.clientWidth+10,top,gap,a,b,passed:false})
+ }
+ function flap(){if(!dead)vy=-7.0}
+ box.onpointerdown=e=>{e.preventDefault();flap()};
+ window.onkeydown=e=>{if(e.code==="Space"){e.preventDefault();flap()}};
+ function die(){if(dead)return;dead=true;submit(score,`Distance: ${score}`)}
+ function frame(now){
+   if(dead)return;
+   const dt=Math.min(30,now-last)/16.67;last=now;
+   const elapsed=(now-start)/1000;
+   // Gentle opening: lower gravity and much slower pipes. Difficulty ramps over ~18 sec.
+   const progress=Math.min(1,elapsed/18);
+   const gravity=.32+(.10*progress);
+   const speed=1.75+(1.55*progress);
+   const spawnAt=125-(30*progress);
+   vy+=gravity*dt;y+=vy*dt;bird.style.top=y+"px";
+   spawn+=dt;if(spawn>spawnAt){spawn=0;add()}
+   pipes.forEach(p=>{
+     p.x-=speed*dt;p.a.style.left=p.x+"px";p.b.style.left=p.x+"px";
+     if(!p.passed&&p.x+70<90){p.passed=true;score++;socket.emit("live-score",{score})}
+     if(p.x<124&&p.x+70>90&&(y<p.top||y+34>p.top+p.gap))die()
+   });
+   if(y<0||y+34>box.clientHeight-18)die();
+   requestAnimationFrame(frame)
+ }
+ // Give the player a short clean runway before the first pipe.
+ setTimeout(()=>{if(!dead)add()},900);
+ requestAnimationFrame(frame)
 }
 function centerGame(){
  $("area").innerHTML=`<div style="width:min(760px,92vw)"><div class="instruction">Tap once. Stop the dot as close to the center as possible.</div><div id="track" style="height:90px;position:relative;border:1px solid #333;border-radius:18px;background:#080808"><div style="position:absolute;left:50%;top:0;bottom:0;width:3px;background:var(--green)"></div><div id="dot" style="position:absolute;top:27px;width:36px;height:36px;border-radius:50%;background:var(--red)"></div></div></div>`;
@@ -251,7 +305,15 @@ function stoplightGame(){
  b.onclick=()=>{if(finished)return;if(!green){finished=true;clearTimeout(to);submit(99999,"False start");return}finished=true;const ms=performance.now()-at;submit(ms,`${Math.round(ms)} ms`)};
 }
 
-function final(){const rows=s.results||[];$("winner").textContent=rows[0]?("@"+rows[0].name+" WON THE DROP"):"DROP COMPLETE";$("rows").innerHTML=rows.slice(0,20).map((r,i)=>`<div class="row"><span>#${i+1} @${esc(r.name)}</span><span>${fmt(r.score)}</span></div>`).join("");$("newDrop").classList.remove("hidden")}
+function final(){
+ const rows=s.results||[];
+ $("winner").textContent=rows[0]?("@"+rows[0].name+" WON THE DROP"):"DROP COMPLETE";
+ $("finalCount").textContent=rows.length;
+ const medal=i=>i===0?"🏆":i===1?"🥈":i===2?"🥉":"#"+(i+1);
+ $("rows").innerHTML=rows.map((r,i)=>`<div class="row"><span class="placeMedal">${medal(i)}</span><span>@${esc(r.name)}${r.isBot?'<span class="bot">CPU</span>':''}</span><span>${r.roundsSurvived!=null?r.roundsSurvived+" levels":(r.score!=null?fmt(r.score):"")}</span><span class="${i===0?"survive":""}">${i===0?"WINNER":i===1?"2ND":i===2?"3RD":""}</span></div>`).join("");
+ const b=$("nextDropBtn");
+ if(b)b.onclick=()=>{show("lobby");window.scrollTo({top:0,behavior:"smooth"})};
+}
 function fmt(v){
  if(["button","reaction","center","slider","stoplight"].includes(s.game))return Math.round(v)+(s.game==="center"||s.game==="slider"?" px off":" ms");
  if(s.game==="stack")return v+" blocks";
