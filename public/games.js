@@ -26,11 +26,18 @@ window.DropGames = (() => {
   }
 
   function stack(ctx) {
-    ctx.area.innerHTML=`<div><div class="instruction">Tap to drop. Miss once and you're out.</div><div id="stack" class="stack"></div></div>`;
+    ctx.area.innerHTML=`<div><div class="instruction">Tap to drop each block. It starts quick and gets faster every level.</div><div id="stack" class="stack"></div></div>`;
     const box=$("stack");
-    let level=0,w=190,x=0,lastX=0,dir=1,speed=2.1,cur=null,raf=null,dead=false;
+    // Faster than V3: starts at 3.25 instead of 2.1 and accelerates harder.
+    let level=0,w=190,x=0,lastX=0,dir=1,speed=3.25,cur=null,raf=null,dead=false;
     function spawn(){
-      cur=document.createElement("div");cur.className="block";cur.style.width=w+"px";cur.style.bottom=(level*29)+"px";box.appendChild(cur);x=0;move();
+      cur=document.createElement("div");
+      cur.className="block";
+      cur.style.width=w+"px";
+      cur.style.bottom=(level*29)+"px";
+      box.appendChild(cur);
+      x=dir>0?0:Math.max(0,box.clientWidth-w);
+      move();
     }
     function move(){
       if(dead)return;
@@ -41,13 +48,44 @@ window.DropGames = (() => {
       raf=requestAnimationFrame(move);
     }
     box.addEventListener("pointerdown",e=>{
-      e.preventDefault();if(dead)return;cancelAnimationFrame(raf);
-      if(level===0){lastX=x;level++;ctx.live(level);spawn();return}
-      const L=Math.max(x,lastX),R=Math.min(x+w,lastX+w),overlap=R-L;
-      if(overlap<=3){dead=true;ctx.submit(level,`Stack height: ${level}`);return}
-      w=overlap;lastX=L;cur.style.left=L+"px";cur.style.width=w+"px";level++;ctx.live(level);
-      speed+=0.14*ramp(ctx.round,level/10);
-      if(level>=18){dead=true;ctx.submit(level,`Stack height: ${level}`);return}
+      e.preventDefault();
+      if(dead)return;
+      cancelAnimationFrame(raf);
+
+      if(level===0){
+        lastX=x;
+        level++;
+        ctx.live(level);
+        speed+=0.22;
+        spawn();
+        return;
+      }
+
+      const L=Math.max(x,lastX);
+      const R=Math.min(x+w,lastX+w);
+      const overlap=R-L;
+
+      if(overlap<=3){
+        dead=true;
+        ctx.submit(level,`Stack height: ${level}`);
+        return;
+      }
+
+      w=overlap;
+      lastX=L;
+      cur.style.left=L+"px";
+      cur.style.width=w+"px";
+      level++;
+      ctx.live(level);
+
+      // Faster acceleration, while still respecting the tournament difficulty tier.
+      speed+=0.24*ramp(ctx.round,Math.min(1,level/9));
+
+      if(level>=18){
+        dead=true;
+        ctx.submit(level,`Stack height: ${level}`);
+        return;
+      }
       spawn();
     },{passive:false});
     spawn();
@@ -210,23 +248,104 @@ window.DropGames = (() => {
   }
 
   function balance(ctx) {
-    ctx.area.innerHTML=`<div><div class="instruction">Hold LEFT or RIGHT to keep the ball on the platform.</div><div id="bal" style="width:min(700px,94vw);height:480px;position:relative;border:1px solid #333;border-radius:18px;overflow:hidden;background:#080d10;touch-action:none"><div id="plat" style="position:absolute;bottom:70px;left:250px;width:180px;height:18px;border-radius:9px;background:var(--green)"></div><div id="ball" style="position:absolute;width:32px;height:32px;border-radius:50%;background:var(--gold);left:324px;bottom:88px"></div></div><div class="balanceControls"><button id="leftBtn" class="balanceBtn">← LEFT</button><button id="rightBtn" class="balanceBtn">RIGHT →</button></div></div>`;
-    const box=$("bal"),plat=$("plat"),ball=$("ball"),left=$("leftBtn"),right=$("rightBtn");
-    let px=box.clientWidth/2-90,bx=box.clientWidth/2-16,vx=1.25,dir=0,dead=false,start=performance.now(),last=performance.now();
-    const set=d=>e=>{e.preventDefault();dir=d}, stop=e=>{e.preventDefault();dir=0};
-    left.addEventListener("pointerdown",set(-1),{passive:false});right.addEventListener("pointerdown",set(1),{passive:false});
-    [left,right].forEach(b=>["pointerup","pointercancel","pointerleave"].forEach(ev=>b.addEventListener(ev,stop,{passive:false})));
+    ctx.area.innerHTML=`<div>
+      <div class="instruction">Drag the basket left and right to catch the falling balls.</div>
+      <div id="basketGame" style="width:min(700px,94vw);height:480px;position:relative;overflow:hidden;border:1px solid #333;border-radius:18px;background:#080d10;touch-action:none">
+        <div id="sliderTrack" style="position:absolute;left:30px;right:30px;bottom:28px;height:10px;border-radius:999px;background:#252525"></div>
+        <div id="basket" style="position:absolute;bottom:48px;width:110px;height:28px;border:3px solid var(--green);border-top:0;border-radius:0 0 22px 22px;background:#11261a"></div>
+      </div>
+      <p><b id="basketScore">0</b> catches</p>
+    </div>`;
+
+    const box=$("basketGame"),basket=$("basket"),scoreEl=$("basketScore");
+    let basketX=Math.max(0,box.clientWidth/2-55);
+    let score=0,balls=[],finished=false,start=performance.now(),lastSpawn=0;
+    basket.style.left=basketX+"px";
+
+    function setBasket(clientX){
+      const r=box.getBoundingClientRect();
+      basketX=Math.max(0,Math.min(box.clientWidth-110,clientX-r.left-55));
+      basket.style.left=basketX+"px";
+    }
+
+    // True slider-style control: press/drag anywhere horizontally.
+    box.addEventListener("pointerdown",e=>{
+      e.preventDefault();
+      box.setPointerCapture?.(e.pointerId);
+      setBasket(e.clientX);
+    },{passive:false});
+
+    box.addEventListener("pointermove",e=>{
+      if(e.buttons===0 && e.pointerType!=="touch")return;
+      e.preventDefault();
+      setBasket(e.clientX);
+    },{passive:false});
+
+    function spawnBall(){
+      const el=document.createElement("div");
+      const size=26;
+      el.style.cssText=`position:absolute;width:${size}px;height:${size}px;border-radius:50%;background:var(--gold);top:-30px`;
+      box.appendChild(el);
+      balls.push({
+        el,
+        x:15+Math.random()*Math.max(1,box.clientWidth-size-30),
+        y:-30,
+        v:2.6+Math.random()*0.8,
+        caught:false
+      });
+    }
+
     function frame(now){
-      if(dead)return;
-      const dt=Math.min(32,now-last);last=now;const prog=Math.min(1,(now-start)/9000),diff=ramp(ctx.round,prog);
-      px=Math.max(0,Math.min(box.clientWidth-180,px+dir*.38*dt));plat.style.left=px+"px";
-      bx+=vx*diff*(dt/16.67);
-      if(bx<0){bx=0;vx=Math.abs(vx)}else if(bx>box.clientWidth-32){bx=box.clientWidth-32;vx=-Math.abs(vx)}
-      ball.style.left=bx+"px";
-      if(!(bx+27>px&&bx+5<px+180)){dead=true;const ms=performance.now()-start;ctx.submit(ms,`${(ms/1000).toFixed(2)} sec balanced`);return}
-      vx+=(Math.random()-.5)*.025*diff;vx=Math.max(-3.2,Math.min(3.2,vx));
+      if(finished)return;
+      const elapsed=(now-start)/1000;
+
+      // 15-second round. Starts gentle, then speeds up.
+      if(elapsed>=15){
+        finished=true;
+        balls.forEach(b=>b.el.remove());
+        ctx.submit(score,`${score} catches`);
+        return;
+      }
+
+      const progress=Math.min(1,elapsed/15);
+      const diff=ramp(ctx.round,progress);
+      const spawnDelay=Math.max(420,900-260*progress*diff);
+
+      if(now-lastSpawn>spawnDelay){
+        lastSpawn=now;
+        spawnBall();
+      }
+
+      balls.forEach(b=>{
+        b.y+=b.v*diff;
+        b.el.style.left=b.x+"px";
+        b.el.style.top=b.y+"px";
+
+        const basketTop=box.clientHeight-76;
+        if(!b.caught &&
+           b.y+26>=basketTop &&
+           b.y<=basketTop+30 &&
+           b.x+26>basketX &&
+           b.x<basketX+110){
+          b.caught=true;
+          score++;
+          scoreEl.textContent=score;
+          ctx.live(score);
+          b.y=999;
+        }
+      });
+
+      balls=balls.filter(b=>{
+        if(b.y>box.clientHeight+30){
+          b.el.remove();
+          return false;
+        }
+        return true;
+      });
+
       requestAnimationFrame(frame);
     }
+
     requestAnimationFrame(frame);
   }
 

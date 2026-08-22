@@ -12,7 +12,7 @@ let lobbyTimer = null;
 const titles = {
   button:"THE BUTTON", stack:"STACK", flappy:"FLAPPY", reaction:"REACTION",
   center:"THE CENTER", taprush:"TAP RUSH", catcher:"CATCH", memory:"MEMORY",
-  slider:"THE LINE", balance:"BALANCE", aim:"AIM", stoplight:"GREEN LIGHT"
+  slider:"THE LINE", balance:"BASKET", aim:"AIM", stoplight:"GREEN LIGHT"
 };
 
 const rules = {
@@ -25,7 +25,7 @@ const rules = {
   catcher:"Move the basket and catch as many drops as possible.",
   memory:"Repeat the growing sequence for as long as you can.",
   slider:"Stop the moving line as close to the target as possible.",
-  balance:"Hold LEFT or RIGHT to keep the ball on the platform.",
+  balance:"Drag the basket left and right to catch as many falling balls as possible.",
   aim:"Hit as many targets as possible in 12 seconds.",
   stoplight:"Tap the instant the light turns green."
 };
@@ -40,7 +40,7 @@ const tutorials = {
   catcher:["⌄","Move the basket to catch falling dots."],
   memory:["◆","Watch the sequence, then repeat it."],
   slider:["│","Stop the line on the target."],
-  balance:["●","Hold LEFT or RIGHT to keep the ball on the platform."],
+  balance:["🧺","Drag the basket left and right to catch the falling balls."],
   aim:["⊙","Hit every target before time runs out."],
   stoplight:["●","Wait on red. Tap on green."]
 };
@@ -276,7 +276,7 @@ function formatScore(v,game){
   if(game==="button"||game==="reaction"||game==="stoplight")return `${Math.round(v)} ms`;
   if(game==="center"||game==="slider")return `${Number(v).toFixed(1)} px`;
   if(game==="stack")return `${v} blocks`;
-  if(game==="balance")return `${(v/1000).toFixed(2)} sec`;
+  if(game==="balance")return `${v} catches`;
   if(game==="memory")return `${v} rounds`;
   if(game==="catcher")return `${v} catches`;
   if(game==="aim")return `${v} hits`;

@@ -547,5 +547,5 @@ io.on("connection", socket => {
 });
 
 server.listen(process.env.PORT || 3000, () => {
-  console.log("DROP V3 clean rebuild ready");
+  console.log("DROP V3.1 Basket + Faster Stack ready");
 });

@@ -44,3 +44,9 @@ Recommended environment variable:
 ## Important
 This is still an MVP. Before meaningful public prizes or large-scale traffic, add:
 persistent accounts, database, server-authoritative game validation, anti-cheat, rate limiting, bot protection, reconnect/session recovery, load testing, monitoring, winner verification, and official prize rules.
+
+## V3.1 — Basket + Faster Stack
+- Replaced BALANCE with BASKET.
+- BASKET is controlled like a horizontal slider: drag left/right anywhere in the game area to position the basket.
+- Catch falling balls for 15 seconds; speed and spawn rate increase progressively.
+- STACK now starts substantially faster and accelerates more aggressively after every successful block.
