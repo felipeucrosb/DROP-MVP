@@ -1,6 +1,6 @@
 {
-  "name": "drop-mvp",
-  "version": "1.0.0",
+  "name": "drop-v3-clean",
+  "version": "3.0.0",
   "private": true,
   "scripts": {
     "start": "node server.js"
