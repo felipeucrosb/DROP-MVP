@@ -50,3 +50,10 @@ persistent accounts, database, server-authoritative game validation, anti-cheat,
 - BASKET is controlled like a horizontal slider: drag left/right anywhere in the game area to position the basket.
 - Catch falling balls for 15 seconds; speed and spawn rate increase progressively.
 - STACK now starts substantially faster and accelerates more aggressively after every successful block.
+
+## V3.2 — Responsive Mobile
+- Game surfaces scale to browser width and height.
+- Compact-phone and short-screen breakpoints.
+- Flappy, Basket, Catch, Aim, Stack, Tap Rush, Memory and large controls scale automatically.
+- Flappy geometry and Catch collision logic now use rendered dimensions.
+- Gameplay screens are constrained to reduce scrolling during rounds.

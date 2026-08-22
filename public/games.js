@@ -94,10 +94,10 @@ window.DropGames = (() => {
   function flappy(ctx) {
     ctx.area.innerHTML=`<div><div class="instruction">Tap to flap. Starts slow, then speeds up. One life.</div><div id="flap" class="flap"><div id="bird" class="bird"></div><div class="ground"></div></div></div>`;
     const box=$("flap"),bird=$("bird");
-    let y=230,vy=0,score=0,dead=false,last=performance.now(),spawnClock=0,pipes=[],start=performance.now();
+    let y=Math.max(70,box.clientHeight*.44),vy=0,score=0,dead=false,last=performance.now(),spawnClock=0,pipes=[],start=performance.now();
     function addPipe(){
       const elapsed=(performance.now()-start)/1000;
-      const gap=Math.max(145,190-Math.min(elapsed,18)*2.5);
+      const gap=Math.max(Math.min(145,box.clientHeight*.34),Math.min(190,box.clientHeight*.43)-Math.min(elapsed,18)*2.5);
       const top=50+Math.random()*(box.clientHeight-gap-120);
       const a=document.createElement("div"),b=document.createElement("div");
       a.className=b.className="pipe";a.style.height=top+"px";a.style.top="0";b.style.height=(box.clientHeight-top-gap)+"px";b.style.bottom="18px";
@@ -190,9 +190,9 @@ window.DropGames = (() => {
       const diff=ramp(ctx.round,Math.min(1,score/10));
       drops.forEach(o=>{
         o.y+=o.v*diff;o.el.style.left=o.x+"px";o.el.style.top=o.y+"px";
-        if(o.y>450&&o.y<485&&o.x+24>bx&&o.x<bx+90){score++;ctx.live(score);o.y=999}
+        const basketY=box.clientHeight-50;if(o.y>basketY-28&&o.y<basketY+12&&o.x+24>bx&&o.x<bx+90){score++;ctx.live(score);o.y=box.clientHeight+100}
       });
-      drops=drops.filter(o=>{if(o.y>520){o.el.remove();return false}return true});
+      drops=drops.filter(o=>{if(o.y>box.clientHeight+35){o.el.remove();return false}return true});
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
