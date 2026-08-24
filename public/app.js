@@ -275,7 +275,7 @@ function renderSpectator(){
 function formatScore(v,game){
   if(game==="button"||game==="reaction"||game==="stoplight")return `${Math.round(v)} ms`;
   if(game==="center"||game==="slider")return `${Number(v).toFixed(1)} px`;
-  if(game==="stack")return `${v} blocks`;
+  if(["stack","flappy","memory","balance"].includes(game))return `${(v/1000).toFixed(2)} sec`;
   if(game==="balance")return `${v} catches`;
   if(game==="memory")return `${v} rounds`;
   if(game==="catcher")return `${v} catches`;

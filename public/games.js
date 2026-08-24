@@ -14,6 +14,10 @@ window.DropGames = (() => {
     return 1 + (mult - 1) * Math.max(0, Math.min(1, progress));
   }
 
+  function survivalCurve(s){if(s<5)return .72+.056*s;if(s<10)return 1+.10*(s-5);if(s<15)return 1.5+.18*(s-10);if(s<20)return 2.4+.28*(s-15);return 3.8+.22*(s-20)}
+  function survivalLabel(s){return s<5?"EASY":s<10?"MEDIUM":s<15?"HARD":s<20?"EXPERT":"INSANE"}
+  function survivalHud(start){const s=(performance.now()-start)/1000,a=$("survivalStage"),t=$("survivalTime");if(a)a.textContent=survivalLabel(s);if(t)t.textContent=s.toFixed(1)+"s";return s}
+
   function button(ctx) {
     let running=false,start=0,raf=null;
     ctx.area.innerHTML=`<div><div class="instruction">Hold. Release as close to <b>5.000</b> seconds as possible.</div><div id="time" class="huge">0.000</div><br><button id="hold" class="hold">HOLD</button></div>`;
@@ -26,107 +30,20 @@ window.DropGames = (() => {
   }
 
   function stack(ctx) {
-    ctx.area.innerHTML=`<div><div class="instruction">Tap to drop each block. It starts quick and gets faster every level.</div><div id="stack" class="stack"></div></div>`;
-    const box=$("stack");
-    // Faster than V3: starts at 3.25 instead of 2.1 and accelerates harder.
-    let level=0,w=190,x=0,lastX=0,dir=1,speed=3.25,cur=null,raf=null,dead=false;
-    function spawn(){
-      cur=document.createElement("div");
-      cur.className="block";
-      cur.style.width=w+"px";
-      cur.style.bottom=(level*29)+"px";
-      box.appendChild(cur);
-      x=dir>0?0:Math.max(0,box.clientWidth-w);
-      move();
-    }
-    function move(){
-      if(dead)return;
-      x+=speed*dir;
-      if(x<0){x=0;dir=1}
-      if(x+w>box.clientWidth){x=box.clientWidth-w;dir=-1}
-      cur.style.left=x+"px";
-      raf=requestAnimationFrame(move);
-    }
-    box.addEventListener("pointerdown",e=>{
-      e.preventDefault();
-      if(dead)return;
-      cancelAnimationFrame(raf);
-
-      if(level===0){
-        lastX=x;
-        level++;
-        ctx.live(level);
-        speed+=0.22;
-        spawn();
-        return;
-      }
-
-      const L=Math.max(x,lastX);
-      const R=Math.min(x+w,lastX+w);
-      const overlap=R-L;
-
-      if(overlap<=3){
-        dead=true;
-        ctx.submit(level,`Stack height: ${level}`);
-        return;
-      }
-
-      w=overlap;
-      lastX=L;
-      cur.style.left=L+"px";
-      cur.style.width=w+"px";
-      level++;
-      ctx.live(level);
-
-      // Faster acceleration, while still respecting the tournament difficulty tier.
-      speed+=0.24*ramp(ctx.round,Math.min(1,level/9));
-
-      if(level>=18){
-        dead=true;
-        ctx.submit(level,`Stack height: ${level}`);
-        return;
-      }
-      spawn();
-    },{passive:false});
-    spawn();
+    ctx.area.innerHTML=`<div><div class="instruction">Keep stacking until you miss. <b id="survivalStage">EASY</b> · <span id="survivalTime">0.0s</span></div><div id="stack" class="stack"></div></div>`;
+    const box=$("stack");let n=0,w=190,x=0,lastX=0,dir=1,cur,dead=false,start=performance.now(),last=performance.now(),raf;
+    function spawn(){cur=document.createElement("div");cur.className="block";cur.style.width=w+"px";cur.style.bottom=(Math.min(n,14)*29)+"px";box.appendChild(cur);x=dir>0?0:Math.max(0,box.clientWidth-w);move()}
+    function move(now=performance.now()){if(dead)return;const dt=Math.min(32,now-last)/16.67;last=now;const speed=2.15*survivalCurve(survivalHud(start));x+=speed*dir*dt;if(x<0){x=0;dir=1}if(x+w>box.clientWidth){x=box.clientWidth-w;dir=-1}cur.style.left=x+"px";raf=requestAnimationFrame(move)}
+    box.addEventListener("pointerdown",e=>{e.preventDefault();if(dead)return;cancelAnimationFrame(raf);if(n===0){lastX=x;n++;spawn();return}const L=Math.max(x,lastX),R=Math.min(x+w,lastX+w),overlap=R-L;if(overlap<=3){dead=true;const ms=performance.now()-start;ctx.submit(ms,`${(ms/1000).toFixed(2)} sec · ${n} blocks`);return}w=overlap;lastX=L;cur.style.left=L+"px";cur.style.width=w+"px";n++;ctx.live(Math.round(performance.now()-start));spawn()},{passive:false});spawn();
   }
 
   function flappy(ctx) {
-    ctx.area.innerHTML=`<div><div class="instruction">Tap to flap. Starts slow, then speeds up. One life.</div><div id="flap" class="flap"><div id="bird" class="bird"></div><div class="ground"></div></div></div>`;
-    const box=$("flap"),bird=$("bird");
-    let y=Math.max(70,box.clientHeight*.44),vy=0,score=0,dead=false,last=performance.now(),spawnClock=0,pipes=[],start=performance.now();
-    function addPipe(){
-      const elapsed=(performance.now()-start)/1000;
-      const gap=Math.max(Math.min(145,box.clientHeight*.34),Math.min(190,box.clientHeight*.43)-Math.min(elapsed,18)*2.5);
-      const top=50+Math.random()*(box.clientHeight-gap-120);
-      const a=document.createElement("div"),b=document.createElement("div");
-      a.className=b.className="pipe";a.style.height=top+"px";a.style.top="0";b.style.height=(box.clientHeight-top-gap)+"px";b.style.bottom="18px";
-      box.append(a,b);pipes.push({x:box.clientWidth+10,top,gap,a,b,passed:false});
-    }
-    const flap=e=>{if(e)e.preventDefault();if(!dead)vy=-7.0};
-    box.addEventListener("pointerdown",flap,{passive:false});
-    window.addEventListener("keydown",e=>{if(e.code==="Space"){e.preventDefault();flap()}});
-    function die(){if(dead)return;dead=true;ctx.submit(score,`Distance: ${score}`)}
-    function frame(now){
-      if(dead)return;
-      const dt=Math.min(30,now-last)/16.67;last=now;
-      const elapsed=(now-start)/1000,progress=Math.min(1,elapsed/18);
-      const gravity=.32+.10*progress;
-      const speed=(1.75+1.55*progress)*ramp(ctx.round,Math.min(1,score/8));
-      const spawnAt=125-30*progress;
-      vy+=gravity*dt;y+=vy*dt;bird.style.top=y+"px";
-      spawnClock+=dt;if(spawnClock>spawnAt){spawnClock=0;addPipe()}
-      pipes.forEach(p=>{
-        p.x-=speed*dt;p.a.style.left=p.x+"px";p.b.style.left=p.x+"px";
-        if(!p.passed&&p.x+70<90){p.passed=true;score++;ctx.live(score)}
-        if(p.x<124&&p.x+70>90&&(y<p.top||y+34>p.top+p.gap))die();
-      });
-      pipes=pipes.filter(p=>{if(p.x<-90){p.a.remove();p.b.remove();return false}return true});
-      if(y<0||y+34>box.clientHeight-18)die();
-      requestAnimationFrame(frame);
-    }
-    setTimeout(()=>{if(!dead)addPipe()},900);
-    requestAnimationFrame(frame);
+    ctx.area.innerHTML=`<div><div class="instruction">Stay alive. <b id="survivalStage">EASY</b> · <span id="survivalTime">0.0s</span></div><div id="flap" class="flap"><div id="bird" class="bird"></div><div class="ground"></div></div></div>`;
+    const box=$("flap"),bird=$("bird");let y=Math.max(70,box.clientHeight*.44),vy=0,dead=false,last=performance.now(),clock=0,pipes=[],start=performance.now();
+    function pipe(sec){const c=survivalCurve(sec),gap=Math.max(Math.min(92,box.clientHeight*.22),Math.min(205,box.clientHeight*.46)-(c-.72)*34),top=45+Math.random()*Math.max(40,box.clientHeight-gap-120),a=document.createElement("div"),b=document.createElement("div");a.className=b.className="pipe";a.style.height=top+"px";a.style.top="0";b.style.height=Math.max(20,box.clientHeight-top-gap-18)+"px";b.style.bottom="18px";box.append(a,b);pipes.push({x:box.clientWidth+10,top,gap,a,b})}
+    box.addEventListener("pointerdown",e=>{e.preventDefault();if(!dead)vy=-7},{passive:false});
+    function die(){if(dead)return;dead=true;const ms=performance.now()-start;ctx.submit(ms,`${(ms/1000).toFixed(2)} sec survived`)}
+    function frame(now){if(dead)return;const dt=Math.min(30,now-last)/16.67;last=now;const sec=survivalHud(start),c=survivalCurve(sec),gravity=.30+Math.min(.18,(c-.72)*.055),speed=1.45*c,spawnAt=Math.max(58,138-(c-.72)*19);vy+=gravity*dt;y+=vy*dt;bird.style.top=y+"px";clock+=dt;if(clock>spawnAt){clock=0;pipe(sec)}pipes.forEach(p=>{p.x-=speed*dt;p.a.style.left=p.x+"px";p.b.style.left=p.x+"px";if(p.x<124&&p.x+70>90&&(y<p.top||y+34>p.top+p.gap))die()});pipes=pipes.filter(p=>{if(p.x<-90){p.a.remove();p.b.remove();return false}return true});if(y<0||y+34>box.clientHeight-18)die();if(!dead){ctx.live(Math.round(now-start));requestAnimationFrame(frame)}}setTimeout(()=>{if(!dead)pipe(0)},1200);requestAnimationFrame(frame);
   }
 
   function reaction(ctx) {
@@ -199,35 +116,11 @@ window.DropGames = (() => {
   }
 
   function memory(ctx) {
-    const colors=["#ff3b30","#2bd67b","#f3c44e","#4c8dff"];
-    let seq=[],input=[],level=0,busy=true,dead=false;
-    ctx.area.innerHTML=`<div><div class="instruction">Watch the sequence. Then repeat it.</div><div id="mem" style="display:grid;grid-template-columns:repeat(2,150px);gap:12px;justify-content:center"></div><p>Round <b id="ml">0</b></p></div>`;
-    const mem=$("mem");
-    colors.forEach((c,i)=>{
-      const b=document.createElement("button");b.style.cssText=`width:150px;height:150px;border:0;border-radius:22px;background:${c};opacity:.45;touch-action:none`;
-      b.addEventListener("pointerdown",e=>{e.preventDefault();press(i)},{passive:false});mem.appendChild(b);
-    });
-    const btns=[...mem.children];
-    const wait=ms=>new Promise(r=>setTimeout(r,ms));
-    async function flash(i,ms){btns[i].style.opacity="1";await wait(ms);btns[i].style.opacity=".45";await wait(100)}
-    async function next(){
-      level++;$("ml").textContent=level;ctx.live(Math.max(0,level-1));seq.push(Math.floor(Math.random()*4));input=[];busy=true;await wait(300);
-      const speed=Math.max(180,380/ramp(ctx.round,Math.min(1,level/8)));
-      for(const i of seq)await flash(i,speed);
-      busy=false;
-    }
-    function press(i){
-      if(busy||dead)return;
-      input.push(i);flash(i,120);
-      const pos=input.length-1;
-      if(seq[pos]!==i){dead=true;ctx.submit(level-1,`${level-1} rounds completed`);return}
-      if(input.length===seq.length){
-        busy=true;
-        if(level>=12){dead=true;ctx.submit(level,`${level} rounds completed`)}
-        else setTimeout(next,450);
-      }
-    }
-    next();
+    const colors=["#ff3b30","#2bd67b","#f3c44e","#4c8dff"];let seq=[],input=[],level=0,busy=true,dead=false,start=performance.now();
+    ctx.area.innerHTML=`<div><div class="instruction">Repeat until you make a mistake. <b id="survivalStage">EASY</b> · <span id="survivalTime">0.0s</span></div><div id="mem" style="display:grid;grid-template-columns:repeat(2,150px);gap:12px;justify-content:center"></div><p>Sequence <b id="ml">0</b></p></div>`;
+    const mem=$("mem");colors.forEach((c,i)=>{const b=document.createElement("button");b.style.cssText=`width:150px;height:150px;border:0;border-radius:22px;background:${c};opacity:.45;touch-action:none`;b.addEventListener("pointerdown",e=>{e.preventDefault();press(i)},{passive:false});mem.appendChild(b)});const btns=[...mem.children],wait=ms=>new Promise(r=>setTimeout(r,ms));
+    async function flash(i,ms){btns[i].style.opacity="1";await wait(ms);btns[i].style.opacity=".45";await wait(110)}async function next(){if(dead)return;level++;$("ml").textContent=level;seq.push(Math.floor(Math.random()*4));input=[];busy=true;await wait(300);const speed=Math.max(105,500/survivalCurve(survivalHud(start)));for(const i of seq){if(dead)return;await flash(i,speed)}busy=false}
+    function press(i){if(busy||dead)return;input.push(i);flash(i,100);const pos=input.length-1;if(seq[pos]!==i){dead=true;const ms=performance.now()-start;ctx.submit(ms,`${(ms/1000).toFixed(2)} sec · ${level-1} sequences`);return}if(input.length===seq.length){ctx.live(Math.round(performance.now()-start));busy=true;setTimeout(next,350)}}const hud=setInterval(()=>{if(dead)clearInterval(hud);else survivalHud(start)},100);next();
   }
 
   function slider(ctx) {
@@ -248,105 +141,11 @@ window.DropGames = (() => {
   }
 
   function balance(ctx) {
-    ctx.area.innerHTML=`<div>
-      <div class="instruction">Drag the basket left and right to catch the falling balls.</div>
-      <div id="basketGame" style="width:min(700px,94vw);height:480px;position:relative;overflow:hidden;border:1px solid #333;border-radius:18px;background:#080d10;touch-action:none">
-        <div id="sliderTrack" style="position:absolute;left:30px;right:30px;bottom:28px;height:10px;border-radius:999px;background:#252525"></div>
-        <div id="basket" style="position:absolute;bottom:48px;width:110px;height:28px;border:3px solid var(--green);border-top:0;border-radius:0 0 22px 22px;background:#11261a"></div>
-      </div>
-      <p><b id="basketScore">0</b> catches</p>
-    </div>`;
-
-    const box=$("basketGame"),basket=$("basket"),scoreEl=$("basketScore");
-    let basketX=Math.max(0,box.clientWidth/2-55);
-    let score=0,balls=[],finished=false,start=performance.now(),lastSpawn=0;
-    basket.style.left=basketX+"px";
-
-    function setBasket(clientX){
-      const r=box.getBoundingClientRect();
-      basketX=Math.max(0,Math.min(box.clientWidth-110,clientX-r.left-55));
-      basket.style.left=basketX+"px";
-    }
-
-    // True slider-style control: press/drag anywhere horizontally.
-    box.addEventListener("pointerdown",e=>{
-      e.preventDefault();
-      box.setPointerCapture?.(e.pointerId);
-      setBasket(e.clientX);
-    },{passive:false});
-
-    box.addEventListener("pointermove",e=>{
-      if(e.buttons===0 && e.pointerType!=="touch")return;
-      e.preventDefault();
-      setBasket(e.clientX);
-    },{passive:false});
-
-    function spawnBall(){
-      const el=document.createElement("div");
-      const size=26;
-      el.style.cssText=`position:absolute;width:${size}px;height:${size}px;border-radius:50%;background:var(--gold);top:-30px`;
-      box.appendChild(el);
-      balls.push({
-        el,
-        x:15+Math.random()*Math.max(1,box.clientWidth-size-30),
-        y:-30,
-        v:2.6+Math.random()*0.8,
-        caught:false
-      });
-    }
-
-    function frame(now){
-      if(finished)return;
-      const elapsed=(now-start)/1000;
-
-      // 15-second round. Starts gentle, then speeds up.
-      if(elapsed>=15){
-        finished=true;
-        balls.forEach(b=>b.el.remove());
-        ctx.submit(score,`${score} catches`);
-        return;
-      }
-
-      const progress=Math.min(1,elapsed/15);
-      const diff=ramp(ctx.round,progress);
-      const spawnDelay=Math.max(420,900-260*progress*diff);
-
-      if(now-lastSpawn>spawnDelay){
-        lastSpawn=now;
-        spawnBall();
-      }
-
-      balls.forEach(b=>{
-        b.y+=b.v*diff;
-        b.el.style.left=b.x+"px";
-        b.el.style.top=b.y+"px";
-
-        const basketTop=box.clientHeight-76;
-        if(!b.caught &&
-           b.y+26>=basketTop &&
-           b.y<=basketTop+30 &&
-           b.x+26>basketX &&
-           b.x<basketX+110){
-          b.caught=true;
-          score++;
-          scoreEl.textContent=score;
-          ctx.live(score);
-          b.y=999;
-        }
-      });
-
-      balls=balls.filter(b=>{
-        if(b.y>box.clientHeight+30){
-          b.el.remove();
-          return false;
-        }
-        return true;
-      });
-
-      requestAnimationFrame(frame);
-    }
-
-    requestAnimationFrame(frame);
+    ctx.area.innerHTML=`<div><div class="instruction">Catch the balls. 3 misses = OUT. <b id="survivalStage">EASY</b> · <span id="survivalTime">0.0s</span></div><div id="basketGame" style="width:min(700px,94vw);height:480px;position:relative;overflow:hidden;border:1px solid #333;border-radius:18px;background:#080d10;touch-action:none"><div id="basket" style="position:absolute;bottom:30px;width:110px;height:28px;border:3px solid var(--green);border-top:0;border-radius:0 0 22px 22px;background:#11261a"></div></div><p><b id="basketScore">0</b> catches · <b id="basketLives">3</b> lives</p></div>`;
+    const box=$("basketGame"),basket=$("basket");let bx=Math.max(0,box.clientWidth/2-55),score=0,lives=3,balls=[],dead=false,start=performance.now(),lastSpawn=0,last=performance.now();basket.style.left=bx+"px";
+    function move(x){const r=box.getBoundingClientRect();bx=Math.max(0,Math.min(box.clientWidth-110,x-r.left-55));basket.style.left=bx+"px"}box.addEventListener("pointerdown",e=>{e.preventDefault();box.setPointerCapture?.(e.pointerId);move(e.clientX)},{passive:false});box.addEventListener("pointermove",e=>{if(e.buttons===0&&e.pointerType!=="touch")return;e.preventDefault();move(e.clientX)},{passive:false});
+    function spawn(c){const el=document.createElement("div"),size=Math.max(18,28-Math.min(8,(c-.72)*2));el.style.cssText=`position:absolute;width:${size}px;height:${size}px;border-radius:50%;background:var(--gold);top:-30px`;box.appendChild(el);balls.push({el,size,x:10+Math.random()*Math.max(1,box.clientWidth-size-20),y:-30,v:1.75+Math.random()*.55,done:false})}
+    function frame(now){if(dead)return;const dt=Math.min(32,now-last)/16.67;last=now;const sec=survivalHud(start),c=survivalCurve(sec);if(now-lastSpawn>Math.max(190,1050/c)){lastSpawn=now;spawn(c)}const top=box.clientHeight-58;balls.forEach(b=>{if(b.done)return;b.y+=b.v*c*dt;b.el.style.left=b.x+"px";b.el.style.top=b.y+"px";if(b.y+b.size>=top&&b.y<=top+28&&b.x+b.size>bx&&b.x<bx+110){b.done=true;score++;$("basketScore").textContent=score;ctx.live(Math.round(now-start))}else if(b.y>box.clientHeight){b.done=true;lives--;$("basketLives").textContent=lives;if(lives<=0){dead=true;const ms=performance.now()-start;ctx.submit(ms,`${(ms/1000).toFixed(2)} sec · ${score} catches`)}}});balls=balls.filter(b=>{if(b.done){b.el.remove();return false}return true});if(!dead)requestAnimationFrame(frame)}requestAnimationFrame(frame);
   }
 
   function aim(ctx) {

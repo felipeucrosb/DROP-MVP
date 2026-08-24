@@ -17,7 +17,7 @@ const HOST_KEY = process.env.HOST_KEY || "DROPADMIN";
 const LOBBY_MS = 3 * 60 * 1000;
 const MIN_HUMANS_TO_START = 2;
 const BOT_COUNT = 10;
-const ROUND_HARD_TIMEOUT_MS = 30000;
+const ROUND_HARD_TIMEOUT_MS = 120000;
 const CUT_SCREEN_MS = 6500;
 const REVEAL_MS = 2600;
 
@@ -264,6 +264,7 @@ function botScore(game) {
     if (game === "reaction" || game === "stoplight") return Math.round(180 + Math.random()*900);
     return +(Math.random()*180).toFixed(2);
   }
+  if (["stack","flappy","memory","balance"].includes(game)) return Math.round(6500 + Math.random()*11500);
   if (game === "taprush") return Math.round(25 + Math.random()*70);
   if (game === "aim") return Math.round(Math.random()*18);
   if (game === "memory") return Math.round(Math.random()*8);
@@ -547,5 +548,5 @@ io.on("connection", socket => {
 });
 
 server.listen(process.env.PORT || 3000, () => {
-  console.log("DROP V3.2 Responsive Mobile ready");
+  console.log("DROP V3.3 Survival Mode ready");
 });

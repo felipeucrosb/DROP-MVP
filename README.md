@@ -57,3 +57,6 @@ persistent accounts, database, server-authoritative game validation, anti-cheat,
 - Flappy, Basket, Catch, Aim, Stack, Tap Rush, Memory and large controls scale automatically.
 - Flappy geometry and Catch collision logic now use rendered dimensions.
 - Gameplay screens are constrained to reduce scrolling during rounds.
+
+## V3.3 Survival Mode
+0–5s EASY; 5–10s MEDIUM; 10–15s HARD; 15–20s EXPERT; 20s+ INSANE. Flappy, Stack, Basket and Memory end on player failure, not a short timer.
