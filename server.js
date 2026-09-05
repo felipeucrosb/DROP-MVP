@@ -36,7 +36,7 @@ function freshState() {
   return {
     phase: "closed", // closed | lobby | reveal | playing | cut | finished
     dropNo: 1,
-    prize: 10,
+    prize: 1000,
     lobbyDeadline: 0,
     round: 0,
     game: null,
@@ -548,5 +548,5 @@ io.on("connection", socket => {
 });
 
 server.listen(process.env.PORT || 3000, () => {
-  console.log("DROP V3.3 Survival Mode ready");
+  console.log("DROP V3.4 Competition Polish ready");
 });

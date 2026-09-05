@@ -101,3 +101,9 @@ header{display:flex;justify-content:space-between;align-items:center;margin:8px 
  #mem{grid-template-columns:repeat(2,clamp(90px,27vw,120px))!important}
  #mem button{width:clamp(90px,27vw,120px)!important;height:clamp(90px,27vw,120px)!important}
 }
+
+/* V3.4 mobile gameplay + level ranking */
+html,body{touch-action:manipulation;-webkit-text-size-adjust:100%}
+.game,.gameArea,.flap,.stack{touch-action:none!important;overscroll-behavior:none}
+.roundBoardWrap{margin-bottom:18px;border:1px solid #2a2a2a;border-radius:16px;padding:12px;background:#090909}
+.roundWinner{box-shadow:inset 3px 0 0 var(--gold);font-weight:900}

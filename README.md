@@ -60,3 +60,9 @@ persistent accounts, database, server-authoritative game validation, anti-cheat,
 
 ## V3.3 Survival Mode
 0–5s EASY; 5–10s MEDIUM; 10–15s HARD; 15–20s EXPERT; 20s+ INSANE. Flappy, Stack, Basket and Memory end on player failure, not a short timer.
+
+## V3.4 Competition Polish
+- Prize changed to $1,000 everywhere.
+- Flappy blocks iOS double-tap / gesture zoom during gameplay.
+- Stack becomes sharply harder after block 6 and brutal after block 9; successful overlap also narrows progressively.
+- Every level-complete screen now shows LEVEL RESULTS with every participant's score, ranked best-to-worst, before Survivors and Eliminated.

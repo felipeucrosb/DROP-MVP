@@ -9,6 +9,17 @@ let currentGameToken = null;
 let localDone = false;
 let lobbyTimer = null;
 
+// iOS/Safari: gameplay must never trigger browser zoom/gestures.
+document.addEventListener("dblclick",e=>{if(state?.phase==="playing")e.preventDefault()},{passive:false});
+document.addEventListener("gesturestart",e=>{if(state?.phase==="playing")e.preventDefault()},{passive:false});
+let lastTouchEnd=0;
+document.addEventListener("touchend",e=>{
+  if(state?.phase!=="playing")return;
+  const now=Date.now();
+  if(now-lastTouchEnd<350)e.preventDefault();
+  lastTouchEnd=now;
+},{passive:false});
+
 const titles = {
   button:"THE BUTTON", stack:"STACK", flappy:"FLAPPY", reaction:"REACTION",
   center:"THE CENTER", taprush:"TAP RUSH", catcher:"CATCH", memory:"MEMORY",
@@ -82,6 +93,7 @@ function joinedPlayer(){
 }
 
 function render(){
+  document.querySelectorAll(".money").forEach(el=>el.textContent=`$${Number(state.prize||0).toLocaleString()}`);
   if(!state)return;
   $("dropNo").textContent = `DROP #${state.dropNo}`;
   $("waitingCount").textContent = state.playerCount;
@@ -219,42 +231,35 @@ function renderCut(){
   show("cut");
   $("cutRound").textContent=state.round;
 
+  // Exact results from THIS level, already ranked by the server.
+  const roundRows=(state.roundResults||[]).slice().sort((a,b)=>(a.rank??999)-(b.rank??999));
+  $("roundScoreRows").innerHTML=roundRows.map((p,i)=>`
+    <div class="row ${i===0?"roundWinner":""}">
+      <span>${i===0?"🏆":`#${i+1}`}</span>
+      <span>@${esc(p.name)}${p.isBot?'<span class="bot">CPU</span>':''}</span>
+      <span>${formatScore(p.score,state.game)}</span>
+      <span class="${p.survived?"survive":"eliminate"}">${p.survived?"SURVIVED":"ELIMINATED"}</span>
+    </div>`).join("")||'<p class="mini">No scores available.</p>';
+
+  const byRank=new Map(roundRows.map((p,i)=>[p.id,i]));
   const survivors=Object.entries(state.players)
     .filter(([id])=>state.activeIds.includes(id))
     .map(([id,p])=>({id,...p}))
-    .sort((a,b)=>{
-      if(a.isBot!==b.isBot)return a.isBot?1:-1;
-      return a.name.localeCompare(b.name);
-    });
+    .sort((a,b)=>(byRank.get(a.id)??999)-(byRank.get(b.id)??999));
 
   const eliminated=Object.entries(state.players)
-    .filter(([,p])=>["eliminated","disconnected"].includes(p.status))
+    .filter(([,p])=>["eliminated","disconnected","timeout"].includes(p.status))
     .map(([id,p])=>({id,...p}))
     .sort((a,b)=>{
-      const ar=a.eliminatedRound??-1, br=b.eliminatedRound??-1;
-      if(ar!==br)return br-ar;
-      if(a.isBot!==b.isBot)return a.isBot?1:-1;
-      return a.name.localeCompare(b.name);
+      const ai=byRank.get(a.id),bi=byRank.get(b.id);
+      if(ai!=null||bi!=null)return (ai??999)-(bi??999);
+      return (b.eliminatedRound??-1)-(a.eliminatedRound??-1);
     });
 
   $("survivorCount").textContent=survivors.length;
   $("eliminatedCount").textContent=eliminated.length;
-
-  $("survivorRows").innerHTML=survivors.map((p,i)=>`
-    <div class="row">
-      <span>#${i+1}</span>
-      <span>@${esc(p.name)}${p.isBot?'<span class="bot">CPU</span>':''}</span>
-      <span>${p.isBot?"CPU":"PLAYER"}</span>
-      <span class="survive">SURVIVED</span>
-    </div>`).join("")||'<p class="mini">No survivors.</p>';
-
-  $("eliminatedRows").innerHTML=eliminated.map(p=>`
-    <div class="row">
-      <span>☠</span>
-      <span>@${esc(p.name)}${p.isBot?'<span class="bot">CPU</span>':''}</span>
-      <span>LEVEL ${p.eliminatedRound??"—"}</span>
-      <span class="eliminate">ELIMINATED</span>
-    </div>`).join("")||'<p class="mini">Nobody eliminated yet.</p>';
+  $("survivorRows").innerHTML=survivors.map((p,i)=>`<div class="row"><span>#${i+1}</span><span>@${esc(p.name)}${p.isBot?'<span class="bot">CPU</span>':''}</span><span>${p.roundScore!=null?formatScore(p.roundScore,state.game):"—"}</span><span class="survive">SURVIVED</span></div>`).join("")||'<p class="mini">No survivors.</p>';
+  $("eliminatedRows").innerHTML=eliminated.map(p=>`<div class="row"><span>☠</span><span>@${esc(p.name)}${p.isBot?'<span class="bot">CPU</span>':''}</span><span>${byRank.has(p.id)&&p.roundScore!=null?formatScore(p.roundScore,state.game):`LEVEL ${p.eliminatedRound??"—"}`}</span><span class="eliminate">ELIMINATED</span></div>`).join("")||'<p class="mini">Nobody eliminated yet.</p>';
 }
 
 function renderSpectator(){
